@@ -1,0 +1,181 @@
+info:
+  license:
+    name: MIT
+  description: This is an API for the StreamChain service
+  title: StreamChain API
+  version: '1.0'
+components:
+  schemas:
+    DiffTime:
+      type: string
+      format: PyYmMdDThHmMs[.sss]S
+    AppStatus:
+      type: object
+      required:
+      - postgresWorking
+      - pgbouncerWorking
+      - triggers
+      - appVersion
+      - appCommit
+      properties:
+        postgresWorking:
+          type: boolean
+        triggers:
+          items:
+            items:
+            - type: string
+            - type: string
+            - type: string
+            type: array
+            maxItems: 3
+            minItems: 3
+          type: array
+        pgbouncerWorking:
+          type: boolean
+        appVersion:
+          type: string
+        appCommit:
+          type: string
+paths:
+  /api/v1/dynamic/sse:
+    post:
+      summary: Listen to new blocks on the chain
+      responses:
+        '200':
+          description: Returns events describing new blocks
+          content:
+            text/event-stream:
+              schema:
+                items:
+                  type: object
+                  properties:
+                    event:
+                      type: string
+                      enum:
+                      - blocks_changed
+                    data:
+                      type: object
+                      properties:
+                        record:
+                          description: Arbitrary json
+                          title: json
+                        operation:
+                          type: string
+                          enum:
+                          - INSERT
+                          - UPDATE
+                          - DELETE
+                type: array
+                format: event-stream
+                description: A server-sent event stream. This isn't strictly compatible
+                  with OpenApi spec. Also see https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events
+    summary: Server-sent events for new blocks
+  /api/v1/static/last/tx:
+    get:
+      responses:
+        '400':
+          description: Invalid `script`
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: string
+      parameters:
+      - name: script
+        required: false
+        in: query
+        schema:
+          type: string
+  /api/status:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/AppStatus'
+  /api/v1/static/last/slot_no:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                minimum: -9223372036854775808
+                type: integer
+                maximum: 9223372036854775807
+  /api/v1/static/sse/blocks: {}
+  /api/v1/static/last/block:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                minimum: -9223372036854775808
+                type: integer
+                maximum: 9223372036854775807
+  /admin/sync_status/behind_by:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/DiffTime'
+  /admin/db_size:
+    get:
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: string
+  /api/debug/sql:
+    post:
+      responses:
+        '400':
+          description: Invalid `body`
+        '200':
+          description: ''
+          content:
+            text/plain;charset=utf-8:
+              schema:
+                type: string
+      requestBody:
+        content:
+          text/plain;charset=utf-8:
+            schema:
+              type: string
+  /api/v1/dynamic/query:
+    post:
+      responses:
+        '400':
+          description: Invalid `blocks` or `body`
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                description: Arbitrary json
+                title: json
+      parameters:
+      - name: blocks
+        required: false
+        in: query
+        schema:
+          minimum: -9223372036854775808
+          type: integer
+          maximum: 9223372036854775807
+      requestBody:
+        content:
+          text/plain;charset=utf-8:
+            schema:
+              type: string
+openapi: 3.0.0
