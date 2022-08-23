@@ -1,23 +1,13 @@
-info:
-  license:
-    name: MIT
-  description: This is an API for the StreamChain service
-  title: StreamChain API
-  version: '1.0'
 components:
   schemas:
-    DiffTime:
-      type: string
-      format: PyYmMdDThHmMs[.sss]S
     AppStatus:
-      type: object
-      required:
-      - postgresWorking
-      - pgbouncerWorking
-      - triggers
-      - appVersion
-      - appCommit
       properties:
+        appCommit:
+          type: string
+        appVersion:
+          type: string
+        pgbouncerWorking:
+          type: boolean
         postgresWorking:
           type: boolean
         triggers:
@@ -26,156 +16,210 @@ components:
             - type: string
             - type: string
             - type: string
-            type: array
             maxItems: 3
             minItems: 3
+            type: array
           type: array
-        pgbouncerWorking:
-          type: boolean
-        appVersion:
+      required:
+      - postgresWorking
+      - pgbouncerWorking
+      - triggers
+      - appVersion
+      - appCommit
+      type: object
+    DebuggingOutput:
+      properties:
+        dCompileTime:
+          format: double
+          type: number
+        dEXPLAIN:
+          items:
+            type: string
+          type: array
+        dOrigSQL:
           type: string
-        appCommit:
+        dParams:
+          items:
+            $ref: '#/components/schemas/Param'
+          type: array
+        dSQL:
           type: string
+      required:
+      - dSQL
+      - dOrigSQL
+      - dParams
+      - dCompileTime
+      - dEXPLAIN
+      type: object
+    DiffTime:
+      format: PyYmMdDThHmMs[.sss]S
+      type: string
+    Param:
+      description: type is either int8 or str
+      format: value:type
+      type: string
+info:
+  description: This is an API for the StreamChain service
+  license:
+    name: MIT
+  title: StreamChain API
+  version: '1.0'
+openapi: 3.0.0
 paths:
-  /api/v1/dynamic/sse:
-    post:
-      summary: Listen to new blocks on the chain
-      responses:
-        '200':
-          description: Returns events describing new blocks
-          content:
-            text/event-stream:
-              schema:
-                items:
-                  type: object
-                  properties:
-                    event:
-                      type: string
-                      enum:
-                      - blocks_changed
-                    data:
-                      type: object
-                      properties:
-                        record:
-                          description: Arbitrary json
-                          title: json
-                        operation:
-                          type: string
-                          enum:
-                          - INSERT
-                          - UPDATE
-                          - DELETE
-                type: array
-                format: event-stream
-                description: A server-sent event stream. This isn't strictly compatible
-                  with OpenApi spec. Also see https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events
-    summary: Server-sent events for new blocks
-  /api/v1/static/last/tx:
-    get:
-      responses:
-        '400':
-          description: Invalid `script`
-        '200':
-          description: ''
-          content:
-            application/json;charset=utf-8:
-              schema:
-                type: string
-      parameters:
-      - name: script
-        required: false
-        in: query
-        schema:
-          type: string
-  /api/status:
-    get:
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/AppStatus'
-  /api/v1/static/last/slot_no:
-    get:
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json;charset=utf-8:
-              schema:
-                minimum: -9223372036854775808
-                type: integer
-                maximum: 9223372036854775807
-  /api/v1/static/sse/blocks: {}
-  /api/v1/static/last/block:
-    get:
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json;charset=utf-8:
-              schema:
-                minimum: -9223372036854775808
-                type: integer
-                maximum: 9223372036854775807
-  /admin/sync_status/behind_by:
-    get:
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/DiffTime'
   /admin/db_size:
     get:
       responses:
         '200':
-          description: ''
           content:
             application/json;charset=utf-8:
               schema:
                 type: string
+          description: ''
+  /admin/sync_status/behind_by:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/DiffTime'
+          description: ''
   /api/debug/sql:
     post:
-      responses:
-        '400':
-          description: Invalid `body`
-        '200':
-          description: ''
-          content:
-            text/plain;charset=utf-8:
-              schema:
-                type: string
+      parameters:
+      - in: query
+        name: blocks
+        required: false
+        schema:
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          type: integer
+      - in: query
+        name: params
+        schema:
+          items:
+            description: type is either int8 or str
+            format: value:type
+            type: string
+          type: array
       requestBody:
         content:
           text/plain;charset=utf-8:
             schema:
               type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/DebuggingOutput'
+          description: ''
+        '400':
+          description: Invalid `params` or `blocks` or `body`
+  /api/status:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/AppStatus'
+          description: ''
   /api/v1/dynamic/query:
     post:
+      parameters:
+      - in: query
+        name: blocks
+        required: false
+        schema:
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          type: integer
+      - in: query
+        name: params
+        schema:
+          items:
+            description: type is either int8 or str
+            format: value:type
+            type: string
+          type: array
+      requestBody:
+        content:
+          text/plain;charset=utf-8:
+            schema:
+              type: string
       responses:
-        '400':
-          description: Invalid `blocks` or `body`
         '200':
-          description: ''
           content:
             application/json;charset=utf-8:
               schema:
                 description: Arbitrary json
                 title: json
+          description: ''
+        '400':
+          description: Invalid `params` or `blocks` or `body`
+  /api/v1/dynamic/sse:
+    post:
+      responses:
+        '200':
+          content:
+            text/event-stream:
+              schema:
+                description: A server-sent event stream. This isn't strictly compatible
+                  with OpenApi spec. Also see https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events
+                format: event-stream
+                items:
+                  properties:
+                    data:
+                      description: Arbitrary json
+                      title: json
+                    event:
+                      enum:
+                      - new_block
+                      - rollback
+                      type: string
+                  type: object
+                type: array
+          description: Returns events describing new blocks
+      summary: Listen to new blocks on the chain
+    summary: Server-sent events for new blocks
+  /api/v1/static/last/block:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+          description: ''
+  /api/v1/static/last/slot_no:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+          description: ''
+  /api/v1/static/last/tx:
+    get:
       parameters:
-      - name: blocks
+      - in: query
+        name: script
         required: false
-        in: query
         schema:
-          minimum: -9223372036854775808
-          type: integer
-          maximum: 9223372036854775807
-      requestBody:
-        content:
-          text/plain;charset=utf-8:
-            schema:
-              type: string
-openapi: 3.0.0
+          type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: string
+          description: ''
+        '400':
+          description: Invalid `script`
+  /api/v1/static/sse/blocks: {}
