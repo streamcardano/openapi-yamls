@@ -2,31 +2,55 @@ components:
   schemas:
     AppStatus:
       properties:
-        appCommit:
-          type: string
-        appVersion:
-          type: string
+        appVersionInfo:
+          $ref: '#/components/schemas/AppVersion'
         pgbouncerWorking:
           type: boolean
         postgresWorking:
           type: boolean
         triggers:
           items:
-            items:
-            - type: string
-            - type: string
-            - type: string
-            maxItems: 3
-            minItems: 3
-            type: array
+            $ref: '#/components/schemas/AppTrigger'
           type: array
       required:
       - postgresWorking
       - pgbouncerWorking
       - triggers
+      - appVersionInfo
+      type: object
+    AppTrigger:
+      properties:
+        triggerEventManipulation:
+          type: string
+        triggerEventTable:
+          type: string
+        triggerName:
+          type: string
+      required:
+      - triggerEventTable
+      - triggerName
+      - triggerEventManipulation
+      type: object
+    AppVersion:
+      properties:
+        appCommit:
+          type: string
+        appVersion:
+          type: string
+        envName:
+          $ref: '#/components/schemas/BuildEnvironment'
+      required:
       - appVersion
       - appCommit
+      - envName
       type: object
+    BuildEnvironment:
+      enum:
+      - ProductionEnv
+      - StagingEnv
+      - TestEnv
+      - BetaEnv
+      type: string
     DebuggingOutput:
       properties:
         dCompileTime:
