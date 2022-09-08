@@ -51,14 +51,7 @@ components:
       - TestEnv
       - BetaEnv
       type: string
-    DiffTime:
-      format: PyYmMdDThHmMs[.sss]S
-      type: string
-    Param:
-      description: type is either int8 or str
-      format: value:type
-      type: string
-    SqlDebugOutput:
+    DebuggingOutput:
       properties:
         dCompileTime:
           format: double
@@ -82,15 +75,13 @@ components:
       - dCompileTime
       - dEXPLAIN
       type: object
-    WalletDebugOutput:
-      properties:
-        walletCount:
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          type: integer
-      required:
-      - walletCount
-      type: object
+    DiffTime:
+      format: PyYmMdDThHmMs[.sss]S
+      type: string
+    Param:
+      description: type is either int8 or str
+      format: value:type
+      type: string
 info:
   description: This is an API for the StreamChain service
   license:
@@ -145,19 +136,10 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlDebugOutput'
+                $ref: '#/components/schemas/DebuggingOutput'
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
-  /api/debug/wallets:
-    post:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/WalletDebugOutput'
-          description: ''
   /api/status:
     get:
       responses:
