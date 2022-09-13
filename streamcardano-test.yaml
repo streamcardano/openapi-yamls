@@ -51,6 +51,138 @@ components:
       - TestEnv
       - BetaEnv
       type: string
+    CustomQueryResult:
+      oneOf:
+      - properties:
+          blockBlockNo:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockEpochNo:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockEpochSlotNo:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockHash:
+            type: string
+          blockId:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockOpCert:
+            type: string
+          blockOpCertCounter:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockPreviousId:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockProtoMajor:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockProtoMinor:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockSize:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockSlotLeaderId:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockSlotNo:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockTime:
+            type: string
+          blockTxCount:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          blockVrfKey:
+            type: string
+        required:
+        - blockBlockNo
+        - blockEpochNo
+        - blockEpochSlotNo
+        - blockHash
+        - blockId
+        - blockPreviousId
+        - blockProtoMajor
+        - blockProtoMinor
+        - blockSize
+        - blockSlotLeaderId
+        - blockSlotNo
+        - blockTime
+        - blockTxCount
+        type: object
+      - properties:
+          txBlockId:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          txBlockIndex:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          txDeposit:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          txFee:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          txHash:
+            type: string
+          txId:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          txInvalidBefore:
+            format: double
+            type: number
+          txInvalidHereafter:
+            format: double
+            type: number
+          txOutSum:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          txScriptSize:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          txSize:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          txValidContract:
+            type: boolean
+        required:
+        - txBlockId
+        - txBlockIndex
+        - txDeposit
+        - txFee
+        - txHash
+        - txId
+        - txOutSum
+        - txScriptSize
+        - txSize
+        - txValidContract
+        type: object
+      - description: Arbitrary json
+        title: json
+      type: object
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
       type: string
@@ -195,8 +327,9 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                description: Arbitrary json
-                title: json
+                items:
+                  $ref: '#/components/schemas/CustomQueryResult'
+                type: array
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
