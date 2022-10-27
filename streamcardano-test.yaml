@@ -5,19 +5,16 @@ components:
         appVersionInfo:
           $ref: '#/components/schemas/AppVersion'
         pgbouncerWorking:
-          $ref: '#/components/schemas/ComponentStatus'
+          type: boolean
         postgresWorking:
-          $ref: '#/components/schemas/ComponentStatus'
+          type: boolean
         triggers:
           items:
             $ref: '#/components/schemas/AppTrigger'
           type: array
-        wcontrollerStatus:
-          $ref: '#/components/schemas/WalletControllerStatus'
       required:
       - postgresWorking
       - pgbouncerWorking
-      - wcontrollerStatus
       - triggers
       - appVersionInfo
       type: object
@@ -54,11 +51,6 @@ components:
       - TestEnv
       - BetaEnv
       type: string
-    ComponentStatus:
-      oneOf:
-      - type: string
-      - type: string
-      type: object
     CustomQueryResult:
       oneOf:
       - properties:
@@ -222,15 +214,14 @@ components:
       - dCompileTime
       - dEXPLAIN
       type: object
-    WalletControllerStatus:
+    WalletDebugOutput:
       properties:
         walletCount:
-          $ref: '#/components/schemas/ComponentStatus'
-        walletCreationCycle:
-          $ref: '#/components/schemas/ComponentStatus'
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          type: integer
       required:
       - walletCount
-      - walletCreationCycle
       type: object
 info:
   description: This is an API for the StreamChain service
@@ -297,7 +288,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                type: string
+                $ref: '#/components/schemas/WalletDebugOutput'
           description: ''
   /api/status:
     get:
