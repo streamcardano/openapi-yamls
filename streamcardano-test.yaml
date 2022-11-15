@@ -197,22 +197,25 @@ components:
         - tag
         type: object
       - properties:
-          sqlQueryNotAllowedOriginalQuery:
+          forbiddenQueryOriginalQuery:
             type: string
           tag:
             enum:
             - ForbiddenQueryError
             type: string
         required:
-        - sqlQueryNotAllowedOriginalQuery
+        - forbiddenQueryOriginalQuery
         - tag
         type: object
       - properties:
+          invalidQueryError:
+            type: string
           tag:
             enum:
             - InvalidQueryError
             type: string
         required:
+        - invalidQueryError
         - tag
         type: object
       type: object
