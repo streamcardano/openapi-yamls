@@ -186,6 +186,39 @@ components:
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
       type: string
+    InvalidQueryError:
+      oneOf:
+      - properties:
+          tag:
+            enum:
+            - EmptyQueryError
+            type: string
+        required:
+        - tag
+        type: object
+      - properties:
+          forbiddenQueryOriginalQuery:
+            type: string
+          tag:
+            enum:
+            - ForbiddenQueryError
+            type: string
+        required:
+        - forbiddenQueryOriginalQuery
+        - tag
+        type: object
+      - properties:
+          invalidQueryError:
+            type: string
+          tag:
+            enum:
+            - InvalidQueryError
+            type: string
+        required:
+        - invalidQueryError
+        - tag
+        type: object
+      type: object
     Param:
       description: type is either int8 or str
       format: value:type
@@ -205,6 +238,10 @@ components:
           items:
             $ref: '#/components/schemas/Param'
           type: array
+        dResults:
+          items:
+            $ref: '#/components/schemas/CustomQueryResult'
+          type: array
         dSQL:
           type: string
       required:
@@ -213,6 +250,14 @@ components:
       - dParams
       - dCompileTime
       - dEXPLAIN
+      - dResults
+      type: object
+    SqlQueryError:
+      properties:
+        sqlQueryError:
+          type: string
+      required:
+      - sqlQueryError
       type: object
     WalletDebugOutput:
       properties:
@@ -281,6 +326,18 @@ paths:
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
+        '422':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/InvalidQueryError'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
   /api/debug/wallets:
     post:
       responses:
@@ -333,6 +390,18 @@ paths:
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
+        '422':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/InvalidQueryError'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
   /api/v1/dynamic/sse:
     post:
       responses:
