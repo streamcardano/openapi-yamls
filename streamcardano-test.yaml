@@ -8,16 +8,21 @@ components:
             title: json
           type: array
         result:
+          description: Status information about this backend application and attached
+            services.
           properties:
             app_version_info:
               $ref: '#/components/schemas/AppVersion'
             database_triggers:
+              description: Database triggers set for the application.
               items:
                 $ref: '#/components/schemas/AppTrigger'
               type: array
             pgbouncer_working:
+              description: Wheter the postgres bouncer is online.
               type: boolean
             postgres_working:
+              description: Wheter the postgres database is online.
               type: boolean
             sync_status:
               $ref: '#/components/schemas/DiffTime'
@@ -34,27 +39,16 @@ components:
       type: object
     AppTrigger:
       properties:
-        errors:
-          items:
-            description: Arbitrary json
-            title: json
-          type: array
-        result:
-          properties:
-            triggerEventManipulation:
-              type: string
-            triggerEventTable:
-              type: string
-            triggerName:
-              type: string
-          required:
-          - triggerEventTable
-          - triggerName
-          - triggerEventManipulation
-          type: object
+        triggerEventManipulation:
+          type: string
+        triggerEventTable:
+          type: string
+        triggerName:
+          type: string
       required:
-      - result
-      - error
+      - triggerEventTable
+      - triggerName
+      - triggerEventManipulation
       type: object
     AppVersion:
       properties:
@@ -77,6 +71,8 @@ components:
       - BetaEnv
       type: string
     CustomQueryResult:
+      description: Results for custom queries. The particular row schema depends on
+        the target database table.
       oneOf:
       - properties:
           block_no:
@@ -259,25 +255,32 @@ components:
             title: json
           type: array
         result:
+          description: Debug information on a custom SQL database query.
           properties:
             compile_time:
+              description: Time to compile the SQL query, in seconds.
               format: double
               type: number
             explain:
+              description: PostgreSQL explanation of the query.
               items:
                 type: string
               type: array
             orig_sql:
+              description: Original SQL query, as sent in the request.
               type: string
             params:
+              description: Query parameters given as input.
               items:
                 $ref: '#/components/schemas/Param'
               type: array
             results:
+              description: Query results.
               items:
                 $ref: '#/components/schemas/CustomQueryResult'
               type: array
             sql:
+              description: Original SQL query, after parsing.
               type: string
           required:
           - sql
@@ -408,6 +411,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SqlQueryError'
           description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Run a custom database query and retrieve its results along with
+        aditional debug information.'
   /api/v1/debug/wallet:
     post:
       responses:
@@ -417,6 +423,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/WalletDebugOutput'
           description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Retrieve status data about the wallet controller.'
   /api/v1/last/block:
     get:
       responses:
@@ -428,6 +436,9 @@ paths:
                 minimum: -9223372036854775808
                 type: integer
           description: ''
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the number of the last block.'
   /api/v1/last/slot_no:
     get:
       responses:
@@ -439,6 +450,9 @@ paths:
                 minimum: -9223372036854775808
                 type: integer
           description: ''
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the number of the last slot.'
   /api/v1/last/tx:
     get:
       parameters:
@@ -456,6 +470,9 @@ paths:
           description: ''
         '400':
           description: Invalid `script`
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the last transaction hash.'
   /api/v1/query:
     post:
       parameters:
@@ -513,6 +530,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/SqlQueryError'
           description: ''
+      summary: 'Custom database query endpoint. Requires Dev, Production or Staging
+        access: callable via software or human operators. Run a custom database query
+        and retrieve its results.'
   /api/v1/sse:
     post:
       responses:
@@ -548,3 +568,4 @@ paths:
               schema:
                 $ref: '#/components/schemas/AppStatus'
           description: ''
+      summary: Retrieve status information about the backend. Does not require authentication.
