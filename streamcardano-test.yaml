@@ -9,21 +9,24 @@ components:
           type: array
         result:
           properties:
-            appVersionInfo:
+            app_version_info:
               $ref: '#/components/schemas/AppVersion'
-            pgbouncerWorking:
-              type: boolean
-            postgresWorking:
-              type: boolean
-            triggers:
+            database_triggers:
               items:
                 $ref: '#/components/schemas/AppTrigger'
               type: array
+            pgbouncer_working:
+              type: boolean
+            postgres_working:
+              type: boolean
+            sync_status:
+              $ref: '#/components/schemas/DiffTime'
           required:
-          - postgresWorking
-          - pgbouncerWorking
-          - triggers
-          - appVersionInfo
+          - postgres_working
+          - pgbouncer_working
+          - database_triggers
+          - sync_status
+          - app_version_info
           type: object
       required:
       - result
@@ -74,147 +77,136 @@ components:
       - BetaEnv
       type: string
     CustomQueryResult:
-      properties:
-        errors:
-          items:
-            description: Arbitrary json
-            title: json
-          type: array
-        result:
-          oneOf:
-          - properties:
-              block_no:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              epoch_no:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              epoch_slot_no:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              hash:
-                type: string
-              id:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              op_cert:
-                type: string
-              op_cert_counter:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              previous_id:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              proto_major:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              proto_minor:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              size:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              slot_leader_id:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              slot_no:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              time:
-                type: string
-              tx_count:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              vrf_key:
-                type: string
-            required:
-            - block_no
-            - epoch_no
-            - epoch_slot_no
-            - hash
-            - id
-            - previous_id
-            - proto_major
-            - proto_minor
-            - size
-            - slot_leader_id
-            - slot_no
-            - time
-            - tx_count
-            type: object
-          - properties:
-              block_id:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              block_index:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              deposit:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              fee:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              hash:
-                type: string
-              id:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              invalid_before:
-                format: double
-                type: number
-              invalid_hereafter:
-                format: double
-                type: number
-              out_sum:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              script_size:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              size:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-              valid_contract:
-                type: boolean
-            required:
-            - block_id
-            - block_index
-            - deposit
-            - fee
-            - hash
-            - id
-            - out_sum
-            - script_size
-            - size
-            - valid_contract
-            type: object
-          - description: Arbitrary json
-            title: json
-          type: object
-      required:
-      - result
-      - error
+      oneOf:
+      - properties:
+          block_no:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          epoch_no:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          epoch_slot_no:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          hash:
+            type: string
+          id:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          op_cert:
+            type: string
+          op_cert_counter:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          previous_id:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          proto_major:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          proto_minor:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          size:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          slot_leader_id:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          slot_no:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          time:
+            type: string
+          tx_count:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          vrf_key:
+            type: string
+        required:
+        - block_no
+        - epoch_no
+        - epoch_slot_no
+        - hash
+        - id
+        - previous_id
+        - proto_major
+        - proto_minor
+        - size
+        - slot_leader_id
+        - slot_no
+        - time
+        - tx_count
+        type: object
+      - properties:
+          block_id:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          block_index:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          deposit:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          fee:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          hash:
+            type: string
+          id:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          invalid_before:
+            format: double
+            type: number
+          invalid_hereafter:
+            format: double
+            type: number
+          out_sum:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          script_size:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          size:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          valid_contract:
+            type: boolean
+        required:
+        - block_id
+        - block_index
+        - deposit
+        - fee
+        - hash
+        - id
+        - out_sum
+        - script_size
+        - size
+        - valid_contract
+        type: object
+      - description: Arbitrary json
+        title: json
       type: object
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
@@ -252,6 +244,13 @@ components:
       description: type is either int8 or str
       format: value:type
       type: string
+    PrometheusMetrics:
+      properties:
+        mainMetrics:
+          type: string
+      required:
+      - mainMetrics
+      type: object
     SqlDebugOutput:
       properties:
         errors:
@@ -261,32 +260,32 @@ components:
           type: array
         result:
           properties:
-            CompileTime:
+            compile_time:
               format: double
               type: number
-            EXPLAIN:
+            explain:
               items:
                 type: string
               type: array
-            OrigSQL:
+            orig_sql:
               type: string
-            Params:
+            params:
               items:
                 $ref: '#/components/schemas/Param'
               type: array
-            Results:
+            results:
               items:
                 $ref: '#/components/schemas/CustomQueryResult'
               type: array
-            SQL:
+            sql:
               type: string
           required:
-          - SQL
-          - OrigSQL
-          - Params
-          - CompileTime
-          - EXPLAIN
-          - Results
+          - sql
+          - orig_sql
+          - params
+          - compile_time
+          - explain
+          - results
           type: object
       required:
       - result
@@ -347,6 +346,15 @@ paths:
               schema:
                 type: string
           description: ''
+  /admin/prometheus:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PrometheusMetrics'
+          description: ''
   /admin/sync_status/behind_by:
     get:
       responses:
@@ -356,7 +364,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DiffTime'
           description: ''
-  /api/debug/sql:
+  /api/v1/debug/query:
     post:
       parameters:
       - in: query
@@ -400,7 +408,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SqlQueryError'
           description: ''
-  /api/debug/wallets:
+  /api/v1/debug/wallet:
     post:
       responses:
         '200':
@@ -409,16 +417,46 @@ paths:
               schema:
                 $ref: '#/components/schemas/WalletDebugOutput'
           description: ''
-  /api/status:
+  /api/v1/last/block:
     get:
       responses:
         '200':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/AppStatus'
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
           description: ''
-  /api/v1/dynamic/query:
+  /api/v1/last/slot_no:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+          description: ''
+  /api/v1/last/tx:
+    get:
+      parameters:
+      - in: query
+        name: script
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: string
+          description: ''
+        '400':
+          description: Invalid `script`
+  /api/v1/query:
     post:
       parameters:
       - in: query
@@ -446,9 +484,20 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                items:
-                  $ref: '#/components/schemas/CustomQueryResult'
-                type: array
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary json
+                      title: json
+                    type: array
+                  result:
+                    items:
+                      $ref: '#/components/schemas/CustomQueryResult'
+                    type: array
+                required:
+                - result
+                - error
+                type: object
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -464,7 +513,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SqlQueryError'
           description: ''
-  /api/v1/dynamic/sse:
+  /api/v1/sse:
     post:
       responses:
         '200':
@@ -489,43 +538,13 @@ paths:
           description: Returns events describing new blocks
       summary: Listen to new blocks on the chain
     summary: Server-sent events for new blocks
-  /api/v1/static/last/block:
+  /api/v1/sse/blocks: {}
+  /api/v1/status:
     get:
       responses:
         '200':
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                $ref: '#/components/schemas/AppStatus'
           description: ''
-  /api/v1/static/last/slot_no:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-          description: ''
-  /api/v1/static/last/tx:
-    get:
-      parameters:
-      - in: query
-        name: script
-        required: false
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                type: string
-          description: ''
-        '400':
-          description: Invalid `script`
-  /api/v1/static/sse/blocks: {}
