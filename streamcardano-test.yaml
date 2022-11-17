@@ -2,34 +2,56 @@ components:
   schemas:
     AppStatus:
       properties:
-        appVersionInfo:
-          $ref: '#/components/schemas/AppVersion'
-        pgbouncerWorking:
-          type: boolean
-        postgresWorking:
-          type: boolean
-        triggers:
+        errors:
           items:
-            $ref: '#/components/schemas/AppTrigger'
+            description: Arbitrary json
+            title: json
           type: array
+        result:
+          properties:
+            appVersionInfo:
+              $ref: '#/components/schemas/AppVersion'
+            pgbouncerWorking:
+              type: boolean
+            postgresWorking:
+              type: boolean
+            triggers:
+              items:
+                $ref: '#/components/schemas/AppTrigger'
+              type: array
+          required:
+          - postgresWorking
+          - pgbouncerWorking
+          - triggers
+          - appVersionInfo
+          type: object
       required:
-      - postgresWorking
-      - pgbouncerWorking
-      - triggers
-      - appVersionInfo
+      - result
+      - error
       type: object
     AppTrigger:
       properties:
-        triggerEventManipulation:
-          type: string
-        triggerEventTable:
-          type: string
-        triggerName:
-          type: string
+        errors:
+          items:
+            description: Arbitrary json
+            title: json
+          type: array
+        result:
+          properties:
+            triggerEventManipulation:
+              type: string
+            triggerEventTable:
+              type: string
+            triggerName:
+              type: string
+          required:
+          - triggerEventTable
+          - triggerName
+          - triggerEventManipulation
+          type: object
       required:
-      - triggerEventTable
-      - triggerName
-      - triggerEventManipulation
+      - result
+      - error
       type: object
     AppVersion:
       properties:
@@ -52,172 +74,179 @@ components:
       - BetaEnv
       type: string
     CustomQueryResult:
-      oneOf:
-      - properties:
-          blockBlockNo:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockEpochNo:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockEpochSlotNo:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockHash:
-            type: string
-          blockId:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockOpCert:
-            type: string
-          blockOpCertCounter:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockPreviousId:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockProtoMajor:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockProtoMinor:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockSize:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockSlotLeaderId:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockSlotNo:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockTime:
-            type: string
-          blockTxCount:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          blockVrfKey:
-            type: string
-        required:
-        - blockBlockNo
-        - blockEpochNo
-        - blockEpochSlotNo
-        - blockHash
-        - blockId
-        - blockPreviousId
-        - blockProtoMajor
-        - blockProtoMinor
-        - blockSize
-        - blockSlotLeaderId
-        - blockSlotNo
-        - blockTime
-        - blockTxCount
-        type: object
-      - properties:
-          txBlockId:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          txBlockIndex:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          txDeposit:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          txFee:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          txHash:
-            type: string
-          txId:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          txInvalidBefore:
-            format: double
-            type: number
-          txInvalidHereafter:
-            format: double
-            type: number
-          txOutSum:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          txScriptSize:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          txSize:
-            maximum: 9223372036854775807
-            minimum: -9223372036854775808
-            type: integer
-          txValidContract:
-            type: boolean
-        required:
-        - txBlockId
-        - txBlockIndex
-        - txDeposit
-        - txFee
-        - txHash
-        - txId
-        - txOutSum
-        - txScriptSize
-        - txSize
-        - txValidContract
-        type: object
-      - description: Arbitrary json
-        title: json
+      properties:
+        errors:
+          items:
+            description: Arbitrary json
+            title: json
+          type: array
+        result:
+          oneOf:
+          - properties:
+              block_no:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              epoch_no:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              epoch_slot_no:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              hash:
+                type: string
+              id:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              op_cert:
+                type: string
+              op_cert_counter:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              previous_id:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              proto_major:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              proto_minor:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              size:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              slot_leader_id:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              slot_no:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              time:
+                type: string
+              tx_count:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              vrf_key:
+                type: string
+            required:
+            - block_no
+            - epoch_no
+            - epoch_slot_no
+            - hash
+            - id
+            - previous_id
+            - proto_major
+            - proto_minor
+            - size
+            - slot_leader_id
+            - slot_no
+            - time
+            - tx_count
+            type: object
+          - properties:
+              block_id:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              block_index:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              deposit:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              fee:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              hash:
+                type: string
+              id:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              invalid_before:
+                format: double
+                type: number
+              invalid_hereafter:
+                format: double
+                type: number
+              out_sum:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              script_size:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              size:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+              valid_contract:
+                type: boolean
+            required:
+            - block_id
+            - block_index
+            - deposit
+            - fee
+            - hash
+            - id
+            - out_sum
+            - script_size
+            - size
+            - valid_contract
+            type: object
+          - description: Arbitrary json
+            title: json
+          type: object
+      required:
+      - result
+      - error
       type: object
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
       type: string
     InvalidQueryError:
-      oneOf:
-      - properties:
-          tag:
-            enum:
+      properties:
+        errors:
+          oneOf:
+          - enum:
             - EmptyQueryError
             type: string
-        required:
-        - tag
-        type: object
-      - properties:
-          forbiddenQueryOriginalQuery:
-            type: string
-          tag:
-            enum:
-            - ForbiddenQueryError
-            type: string
-        required:
-        - forbiddenQueryOriginalQuery
-        - tag
-        type: object
-      - properties:
-          invalidQueryError:
-            type: string
-          tag:
-            enum:
-            - InvalidQueryError
-            type: string
-        required:
-        - invalidQueryError
-        - tag
-        type: object
+          - properties:
+              forbiddenQueryOriginalQuery:
+                type: string
+            required:
+            - forbiddenQueryOriginalQuery
+            type: object
+          - properties:
+              invalidQueryError:
+                type: string
+            required:
+            - invalidQueryError
+            type: object
+          type: object
+        result:
+          items:
+            description: Arbitrary json
+            title: json
+          type: array
+      required:
+      - result
+      - error
       type: object
     Param:
       description: type is either int8 or str
@@ -225,48 +254,81 @@ components:
       type: string
     SqlDebugOutput:
       properties:
-        dCompileTime:
-          format: double
-          type: number
-        dEXPLAIN:
+        errors:
           items:
-            type: string
+            description: Arbitrary json
+            title: json
           type: array
-        dOrigSQL:
-          type: string
-        dParams:
-          items:
-            $ref: '#/components/schemas/Param'
-          type: array
-        dResults:
-          items:
-            $ref: '#/components/schemas/CustomQueryResult'
-          type: array
-        dSQL:
-          type: string
+        result:
+          properties:
+            CompileTime:
+              format: double
+              type: number
+            EXPLAIN:
+              items:
+                type: string
+              type: array
+            OrigSQL:
+              type: string
+            Params:
+              items:
+                $ref: '#/components/schemas/Param'
+              type: array
+            Results:
+              items:
+                $ref: '#/components/schemas/CustomQueryResult'
+              type: array
+            SQL:
+              type: string
+          required:
+          - SQL
+          - OrigSQL
+          - Params
+          - CompileTime
+          - EXPLAIN
+          - Results
+          type: object
       required:
-      - dSQL
-      - dOrigSQL
-      - dParams
-      - dCompileTime
-      - dEXPLAIN
-      - dResults
+      - result
+      - error
       type: object
     SqlQueryError:
       properties:
-        sqlQueryError:
-          type: string
+        errors:
+          properties:
+            sqlQueryError:
+              type: string
+          required:
+          - sqlQueryError
+          type: object
+        result:
+          items:
+            description: Arbitrary json
+            title: json
+          type: array
       required:
-      - sqlQueryError
+      - result
+      - error
       type: object
     WalletDebugOutput:
       properties:
-        walletCount:
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          type: integer
+        errors:
+          items:
+            description: Arbitrary json
+            title: json
+          type: array
+        result:
+          properties:
+            walletCount:
+              maximum: 9223372036854775807
+              minimum: -9223372036854775808
+              type: integer
+          required:
+          - walletCount
+          type: object
       required:
-      - walletCount
+      - result
+      - error
       type: object
 info:
   description: This is an API for the StreamChain service
