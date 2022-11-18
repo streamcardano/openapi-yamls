@@ -4,8 +4,8 @@ components:
       properties:
         errors:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
         result:
           description: Status information about this backend application and attached
@@ -39,29 +39,29 @@ components:
       type: object
     AppTrigger:
       properties:
-        triggerEventManipulation:
+        event_manipulation:
           type: string
-        triggerEventTable:
+        event_table:
           type: string
-        triggerName:
+        name:
           type: string
       required:
-      - triggerEventTable
-      - triggerName
-      - triggerEventManipulation
+      - event_table
+      - name
+      - event_manipulation
       type: object
     AppVersion:
       properties:
-        appCommit:
+        app_commit:
           type: string
-        appVersion:
+        app_version:
           type: string
-        envName:
+        env_name:
           $ref: '#/components/schemas/BuildEnvironment'
       required:
-      - appVersion
-      - appCommit
-      - envName
+      - app_version
+      - app_commit
+      - env_name
       type: object
     BuildEnvironment:
       enum:
@@ -201,8 +201,8 @@ components:
         - size
         - valid_contract
         type: object
-      - description: Arbitrary json
-        title: json
+      - description: Arbitrary JSON value
+        title: JSON
       type: object
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
@@ -229,8 +229,8 @@ components:
           type: object
         result:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
       required:
       - result
@@ -251,8 +251,8 @@ components:
       properties:
         errors:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
         result:
           description: Debug information on a custom SQL database query.
@@ -305,8 +305,8 @@ components:
           type: object
         result:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
       required:
       - result
@@ -316,8 +316,8 @@ components:
       properties:
         errors:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
         result:
           properties:
@@ -504,8 +504,8 @@ paths:
                 properties:
                   errors:
                     items:
-                      description: Arbitrary json
-                      title: json
+                      description: Arbitrary JSON value
+                      title: JSON
                     type: array
                   result:
                     items:
@@ -546,8 +546,8 @@ paths:
                 items:
                   properties:
                     data:
-                      description: Arbitrary json
-                      title: json
+                      description: Arbitrary JSON value
+                      title: JSON
                     event:
                       enum:
                       - new_block
