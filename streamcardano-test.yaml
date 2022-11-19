@@ -390,6 +390,17 @@ paths:
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Run a custom database query and retrieve its results along with
         aditional debug information.'
+  /api/v1/debug/sync_status/behind_by:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/DiffTime'
+          description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Check by how much time our Cardano node is behind the network.'
   /api/v1/debug/wallet:
     post:
       responses:
