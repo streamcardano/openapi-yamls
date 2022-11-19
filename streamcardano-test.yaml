@@ -381,7 +381,8 @@ paths:
         name: params
         schema:
           items:
-            description: type is either int8 or str
+            description: value with the PG SQL type, currently we support either ':int8'
+              and ':str'
             format: value:type
             type: string
           type: array
@@ -487,7 +488,8 @@ paths:
         name: params
         schema:
           items:
-            description: type is either int8 or str
+            description: value with the PG SQL type, currently we support either ':int8'
+              and ':str'
             format: value:type
             type: string
           type: array
