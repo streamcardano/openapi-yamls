@@ -333,10 +333,10 @@ components:
       - error
       type: object
 info:
-  description: This is an API for the StreamCardano service
+  description: This is an API for the StreamChain service
   license:
     name: MIT
-  title: StreamCardano API
+  title: StreamChain API
   version: '1.0'
 openapi: 3.0.0
 paths:
@@ -381,8 +381,7 @@ paths:
         name: params
         schema:
           items:
-            description: value with the PG SQL type, currently we support either ':int8'
-              and ':str'
+            description: type is either int8 or str
             format: value:type
             type: string
           type: array
@@ -488,8 +487,7 @@ paths:
         name: params
         schema:
           items:
-            description: value with the PG SQL type, currently we support either ':int8'
-              and ':str'
+            description: type is either int8 or str
             format: value:type
             type: string
           type: array
