@@ -19,17 +19,18 @@ components:
                 $ref: '#/components/schemas/AppTrigger'
               type: array
             pgbouncer_working:
-              description: Wheter the postgres bouncer is online.
-              type: boolean
+              $ref: '#/components/schemas/ComponentStatus'
             postgres_working:
-              description: Wheter the postgres database is online.
-              type: boolean
+              $ref: '#/components/schemas/ComponentStatus'
             sync_status:
               $ref: '#/components/schemas/DiffTime'
+            wcontroller_status:
+              $ref: '#/components/schemas/WalletControllerStatus'
           required:
           - postgres_working
           - pgbouncer_working
           - database_triggers
+          - wcontroller_status
           - sync_status
           - app_version_info
           type: object
@@ -70,6 +71,11 @@ components:
       - TestEnv
       - BetaEnv
       type: string
+    ComponentStatus:
+      oneOf:
+      - type: string
+      - type: string
+      type: object
     CustomQueryResult:
       description: Results for custom queries. The particular row schema depends on
         the target database table.
@@ -201,8 +207,8 @@ components:
         - size
         - valid_contract
         type: object
-      - description: Arbitrary json
-        title: json
+      - description: Arbitrary JSON value
+        title: JSON
       type: object
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
@@ -312,7 +318,7 @@ components:
       - result
       - error
       type: object
-    WalletDebugOutput:
+    WalletControllerStatus:
       properties:
         errors:
           items:
@@ -322,11 +328,15 @@ components:
         result:
           properties:
             walletCount:
-              maximum: 9223372036854775807
-              minimum: -9223372036854775808
-              type: integer
+              $ref: '#/components/schemas/ComponentStatus'
+            walletCreationCycle:
+              $ref: '#/components/schemas/ComponentStatus'
+            walletTestnetTransaction:
+              $ref: '#/components/schemas/ComponentStatus'
           required:
           - walletCount
+          - walletCreationCycle
+          - walletTestnetTransaction
           type: object
       required:
       - result
@@ -422,7 +432,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/WalletDebugOutput'
+                type: string
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Retrieve status data about the wallet controller.'
