@@ -4,8 +4,8 @@ components:
       properties:
         errors:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
         result:
           description: Status information about this backend application and attached
@@ -30,7 +30,6 @@ components:
           - postgres_working
           - pgbouncer_working
           - database_triggers
-          - sync_status
           - app_version_info
           type: object
       required:
@@ -38,30 +37,37 @@ components:
       - error
       type: object
     AppTrigger:
+      description: Properties of each loaded database trigger.
       properties:
-        triggerEventManipulation:
+        event_manipulation:
+          description: Target action for the trigger.
           type: string
-        triggerEventTable:
+        event_table:
+          description: Type of event the trigger is listening to.
           type: string
-        triggerName:
+        name:
+          description: Trigger name.
           type: string
       required:
-      - triggerEventTable
-      - triggerName
-      - triggerEventManipulation
+      - event_table
+      - name
+      - event_manipulation
       type: object
     AppVersion:
+      description: Version information about this backend application.
       properties:
-        appCommit:
+        app_commit:
+          description: Current commit hash of this backend application.
           type: string
-        appVersion:
+        app_version:
+          description: Current version of this backend application.
           type: string
-        envName:
+        env_name:
           $ref: '#/components/schemas/BuildEnvironment'
       required:
-      - appVersion
-      - appCommit
-      - envName
+      - app_version
+      - app_commit
+      - env_name
       type: object
     BuildEnvironment:
       enum:
@@ -132,19 +138,19 @@ components:
           vrf_key:
             type: string
         required:
-        - block_no
-        - epoch_no
-        - epoch_slot_no
-        - hash
         - id
-        - previous_id
-        - proto_major
-        - proto_minor
-        - size
-        - slot_leader_id
+        - hash
+        - epoch_no
         - slot_no
+        - epoch_slot_no
+        - block_no
+        - previous_id
+        - slot_leader_id
+        - size
         - time
         - tx_count
+        - proto_major
+        - proto_minor
         type: object
       - properties:
           block_id:
@@ -170,11 +176,13 @@ components:
             minimum: -9223372036854775808
             type: integer
           invalid_before:
-            format: double
-            type: number
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
           invalid_hereafter:
-            format: double
-            type: number
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
           out_sum:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
@@ -190,19 +198,19 @@ components:
           valid_contract:
             type: boolean
         required:
+        - id
+        - hash
         - block_id
         - block_index
-        - deposit
-        - fee
-        - hash
-        - id
         - out_sum
-        - script_size
+        - fee
+        - deposit
         - size
         - valid_contract
+        - script_size
         type: object
-      - description: Arbitrary json
-        title: json
+      - description: Arbitrary JSON value
+        title: JSON
       type: object
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
@@ -229,8 +237,8 @@ components:
           type: object
         result:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
       required:
       - result
@@ -251,8 +259,8 @@ components:
       properties:
         errors:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
         result:
           description: Debug information on a custom SQL database query.
@@ -305,8 +313,8 @@ components:
           type: object
         result:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
       required:
       - result
@@ -316,8 +324,8 @@ components:
       properties:
         errors:
           items:
-            description: Arbitrary json
-            title: json
+            description: Arbitrary JSON value
+            title: JSON
           type: array
         result:
           properties:
@@ -340,33 +348,6 @@ info:
   version: '1.0'
 openapi: 3.0.0
 paths:
-  /admin/db_size:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                type: string
-          description: ''
-  /admin/prometheus:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/PrometheusMetrics'
-          description: ''
-  /admin/sync_status/behind_by:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/DiffTime'
-          description: ''
   /api/v1/debug/query:
     post:
       parameters:
@@ -415,6 +396,17 @@ paths:
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Run a custom database query and retrieve its results along with
         aditional debug information.'
+  /api/v1/debug/sync_status/behind_by:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/DiffTime'
+          description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Check by how much time our Cardano node is behind the network.'
   /api/v1/debug/wallet:
     post:
       responses:
@@ -506,8 +498,8 @@ paths:
                 properties:
                   errors:
                     items:
-                      description: Arbitrary json
-                      title: json
+                      description: Arbitrary JSON value
+                      title: JSON
                     type: array
                   result:
                     items:
@@ -548,8 +540,8 @@ paths:
                 items:
                   properties:
                     data:
-                      description: Arbitrary json
-                      title: json
+                      description: Arbitrary JSON value
+                      title: JSON
                     event:
                       enum:
                       - new_block
