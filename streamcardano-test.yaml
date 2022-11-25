@@ -30,7 +30,6 @@ components:
           - postgres_working
           - pgbouncer_working
           - database_triggers
-          - sync_status
           - app_version_info
           type: object
       required:
