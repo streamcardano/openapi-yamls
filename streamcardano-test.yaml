@@ -2,47 +2,73 @@ components:
   schemas:
     AppStatus:
       properties:
-        appVersionInfo:
-          $ref: '#/components/schemas/AppVersion'
-        pgbouncerWorking:
-          type: boolean
-        postgresWorking:
-          type: boolean
-        triggers:
+        errors:
           items:
-            $ref: '#/components/schemas/AppTrigger'
+            description: Arbitrary JSON value
+            title: JSON
           type: array
+        result:
+          description: Status information about this backend application and attached
+            services.
+          properties:
+            app_version_info:
+              $ref: '#/components/schemas/AppVersion'
+            database_triggers:
+              description: Database triggers set for the application.
+              items:
+                $ref: '#/components/schemas/AppTrigger'
+              type: array
+            pgbouncer_working:
+              description: Wheter the postgres bouncer is online.
+              type: boolean
+            postgres_working:
+              description: Wheter the postgres database is online.
+              type: boolean
+            sync_status:
+              $ref: '#/components/schemas/DiffTime'
+          required:
+          - postgres_working
+          - pgbouncer_working
+          - database_triggers
+          - sync_status
+          - app_version_info
+          type: object
       required:
-      - postgresWorking
-      - pgbouncerWorking
-      - triggers
-      - appVersionInfo
+      - result
+      - error
       type: object
     AppTrigger:
+      description: Properties of each loaded database trigger.
       properties:
-        triggerEventManipulation:
+        event_manipulation:
+          description: Target action for the trigger.
           type: string
-        triggerEventTable:
+        event_table:
+          description: Type of event the trigger is listening to.
           type: string
-        triggerName:
+        name:
+          description: Trigger name.
           type: string
       required:
-      - triggerEventTable
-      - triggerName
-      - triggerEventManipulation
+      - event_table
+      - name
+      - event_manipulation
       type: object
     AppVersion:
+      description: Version information about this backend application.
       properties:
-        appCommit:
+        app_commit:
+          description: Current commit hash of this backend application.
           type: string
-        appVersion:
+        app_version:
+          description: Current version of this backend application.
           type: string
-        envName:
+        env_name:
           $ref: '#/components/schemas/BuildEnvironment'
       required:
-      - appVersion
-      - appCommit
-      - envName
+      - app_version
+      - app_commit
+      - env_name
       type: object
     BuildEnvironment:
       enum:
@@ -52,204 +78,278 @@ components:
       - BetaEnv
       type: string
     CustomQueryResult:
+      description: Results for custom queries. The particular row schema depends on
+        the target database table.
       oneOf:
       - properties:
-          blockBlockNo:
+          block_no:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockEpochNo:
+          epoch_no:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockEpochSlotNo:
+          epoch_slot_no:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockHash:
+          hash:
             type: string
-          blockId:
+          id:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockOpCert:
+          op_cert:
             type: string
-          blockOpCertCounter:
+          op_cert_counter:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockPreviousId:
+          previous_id:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockProtoMajor:
+          proto_major:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockProtoMinor:
+          proto_minor:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockSize:
+          size:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockSlotLeaderId:
+          slot_leader_id:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockSlotNo:
+          slot_no:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockTime:
+          time:
             type: string
-          blockTxCount:
+          tx_count:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          blockVrfKey:
+          vrf_key:
             type: string
         required:
-        - blockBlockNo
-        - blockEpochNo
-        - blockEpochSlotNo
-        - blockHash
-        - blockId
-        - blockPreviousId
-        - blockProtoMajor
-        - blockProtoMinor
-        - blockSize
-        - blockSlotLeaderId
-        - blockSlotNo
-        - blockTime
-        - blockTxCount
+        - id
+        - hash
+        - epoch_no
+        - slot_no
+        - epoch_slot_no
+        - block_no
+        - previous_id
+        - slot_leader_id
+        - size
+        - time
+        - tx_count
+        - proto_major
+        - proto_minor
         type: object
       - properties:
-          txBlockId:
+          block_id:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          txBlockIndex:
+          block_index:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          txDeposit:
+          deposit:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          txFee:
+          fee:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          txHash:
+          hash:
             type: string
-          txId:
+          id:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          txInvalidBefore:
-            format: double
-            type: number
-          txInvalidHereafter:
-            format: double
-            type: number
-          txOutSum:
+          invalid_before:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          txScriptSize:
+          invalid_hereafter:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          txSize:
+          out_sum:
             maximum: 9223372036854775807
             minimum: -9223372036854775808
             type: integer
-          txValidContract:
+          script_size:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          size:
+            maximum: 9223372036854775807
+            minimum: -9223372036854775808
+            type: integer
+          valid_contract:
             type: boolean
         required:
-        - txBlockId
-        - txBlockIndex
-        - txDeposit
-        - txFee
-        - txHash
-        - txId
-        - txOutSum
-        - txScriptSize
-        - txSize
-        - txValidContract
+        - id
+        - hash
+        - block_id
+        - block_index
+        - out_sum
+        - fee
+        - deposit
+        - size
+        - valid_contract
+        - script_size
         type: object
-      - description: Arbitrary json
-        title: json
+      - description: Arbitrary JSON value
+        title: JSON
       type: object
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
       type: string
+    InvalidQueryError:
+      properties:
+        errors:
+          oneOf:
+          - enum:
+            - EmptyQueryError
+            type: string
+          - properties:
+              forbiddenQueryOriginalQuery:
+                type: string
+            required:
+            - forbiddenQueryOriginalQuery
+            type: object
+          - properties:
+              invalidQueryError:
+                type: string
+            required:
+            - invalidQueryError
+            type: object
+          type: object
+        result:
+          items:
+            description: Arbitrary JSON value
+            title: JSON
+          type: array
+      required:
+      - result
+      - error
+      type: object
     Param:
       description: type is either int8 or str
       format: value:type
       type: string
-    SqlDebugOutput:
+    PrometheusMetrics:
       properties:
-        dCompileTime:
-          format: double
-          type: number
-        dEXPLAIN:
-          items:
-            type: string
-          type: array
-        dOrigSQL:
-          type: string
-        dParams:
-          items:
-            $ref: '#/components/schemas/Param'
-          type: array
-        dSQL:
+        mainMetrics:
           type: string
       required:
-      - dSQL
-      - dOrigSQL
-      - dParams
-      - dCompileTime
-      - dEXPLAIN
+      - mainMetrics
+      type: object
+    SqlDebugOutput:
+      properties:
+        errors:
+          items:
+            description: Arbitrary JSON value
+            title: JSON
+          type: array
+        result:
+          description: Debug information on a custom SQL database query.
+          properties:
+            compile_time:
+              description: Time to compile the SQL query, in seconds.
+              format: double
+              type: number
+            explain:
+              description: PostgreSQL explanation of the query.
+              items:
+                type: string
+              type: array
+            orig_sql:
+              description: Original SQL query, as sent in the request.
+              type: string
+            params:
+              description: Query parameters given as input.
+              items:
+                $ref: '#/components/schemas/Param'
+              type: array
+            results:
+              description: Query results.
+              items:
+                $ref: '#/components/schemas/CustomQueryResult'
+              type: array
+            sql:
+              description: Original SQL query, after parsing.
+              type: string
+          required:
+          - sql
+          - orig_sql
+          - params
+          - compile_time
+          - explain
+          - results
+          type: object
+      required:
+      - result
+      - error
+      type: object
+    SqlQueryError:
+      properties:
+        errors:
+          properties:
+            sqlQueryError:
+              type: string
+          required:
+          - sqlQueryError
+          type: object
+        result:
+          items:
+            description: Arbitrary JSON value
+            title: JSON
+          type: array
+      required:
+      - result
+      - error
       type: object
     WalletDebugOutput:
       properties:
-        walletCount:
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          type: integer
+        errors:
+          items:
+            description: Arbitrary JSON value
+            title: JSON
+          type: array
+        result:
+          properties:
+            walletCount:
+              maximum: 9223372036854775807
+              minimum: -9223372036854775808
+              type: integer
+          required:
+          - walletCount
+          type: object
       required:
-      - walletCount
+      - result
+      - error
       type: object
 info:
-  description: This is an API for the StreamChain service
+  description: This is an API for the StreamCardano service
   license:
     name: MIT
-  title: StreamChain API
+  title: StreamCardano API
   version: '1.0'
 openapi: 3.0.0
 paths:
-  /admin/db_size:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                type: string
-          description: ''
-  /admin/sync_status/behind_by:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/DiffTime'
-          description: ''
-  /api/debug/sql:
+  /api/v1/debug/query:
     post:
       parameters:
       - in: query
@@ -263,7 +363,8 @@ paths:
         name: params
         schema:
           items:
-            description: type is either int8 or str
+            description: value with the PG SQL type, currently we support either ':int8'
+              and ':str'
             format: value:type
             type: string
           type: array
@@ -281,7 +382,33 @@ paths:
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
-  /api/debug/wallets:
+        '422':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/InvalidQueryError'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Run a custom database query and retrieve its results along with
+        aditional debug information.'
+  /api/v1/debug/sync_status/behind_by:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/DiffTime'
+          description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Check by how much time our Cardano node is behind the network.'
+  /api/v1/debug/wallet:
     post:
       responses:
         '200':
@@ -290,75 +417,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/WalletDebugOutput'
           description: ''
-  /api/status:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/AppStatus'
-          description: ''
-  /api/v1/dynamic/query:
-    post:
-      parameters:
-      - in: query
-        name: blocks
-        required: false
-        schema:
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          type: integer
-      - in: query
-        name: params
-        schema:
-          items:
-            description: type is either int8 or str
-            format: value:type
-            type: string
-          type: array
-      requestBody:
-        content:
-          text/plain;charset=utf-8:
-            schema:
-              type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                items:
-                  $ref: '#/components/schemas/CustomQueryResult'
-                type: array
-          description: ''
-        '400':
-          description: Invalid `params` or `blocks` or `body`
-  /api/v1/dynamic/sse:
-    post:
-      responses:
-        '200':
-          content:
-            text/event-stream:
-              schema:
-                description: A server-sent event stream. This isn't strictly compatible
-                  with OpenApi spec. Also see https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events
-                format: event-stream
-                items:
-                  properties:
-                    data:
-                      description: Arbitrary json
-                      title: json
-                    event:
-                      enum:
-                      - new_block
-                      - rollback
-                      type: string
-                  type: object
-                type: array
-          description: Returns events describing new blocks
-      summary: Listen to new blocks on the chain
-    summary: Server-sent events for new blocks
-  /api/v1/static/last/block:
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Retrieve status data about the wallet controller.'
+  /api/v1/last/block:
     get:
       responses:
         '200':
@@ -369,7 +430,10 @@ paths:
                 minimum: -9223372036854775808
                 type: integer
           description: ''
-  /api/v1/static/last/slot_no:
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the number of the last block.'
+  /api/v1/last/slot_no:
     get:
       responses:
         '200':
@@ -380,7 +444,10 @@ paths:
                 minimum: -9223372036854775808
                 type: integer
           description: ''
-  /api/v1/static/last/tx:
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the number of the last slot.'
+  /api/v1/last/tx:
     get:
       parameters:
       - in: query
@@ -397,4 +464,103 @@ paths:
           description: ''
         '400':
           description: Invalid `script`
-  /api/v1/static/sse/blocks: {}
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the last transaction hash.'
+  /api/v1/query:
+    post:
+      parameters:
+      - in: query
+        name: blocks
+        required: false
+        schema:
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          type: integer
+      - in: query
+        name: params
+        schema:
+          items:
+            description: value with the PG SQL type, currently we support either ':int8'
+              and ':str'
+            format: value:type
+            type: string
+          type: array
+      requestBody:
+        content:
+          text/plain;charset=utf-8:
+            schema:
+              type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    items:
+                      $ref: '#/components/schemas/CustomQueryResult'
+                    type: array
+                required:
+                - result
+                - error
+                type: object
+          description: ''
+        '400':
+          description: Invalid `params` or `blocks` or `body`
+        '422':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/InvalidQueryError'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
+      summary: 'Custom database query endpoint. Requires Dev, Production or Staging
+        access: callable via software or human operators. Run a custom database query
+        and retrieve its results.'
+  /api/v1/sse:
+    post:
+      responses:
+        '200':
+          content:
+            text/event-stream:
+              schema:
+                description: A server-sent event stream. This isn't strictly compatible
+                  with OpenApi spec. Also see https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events
+                format: event-stream
+                items:
+                  properties:
+                    data:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    event:
+                      enum:
+                      - new_block
+                      - rollback
+                      type: string
+                  type: object
+                type: array
+          description: Returns events describing new blocks
+      summary: Listen to new blocks on the chain
+    summary: Server-sent events for new blocks
+  /api/v1/sse/blocks: {}
+  /api/v1/status:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/AppStatus'
+          description: ''
+      summary: Retrieve status information about the backend. Does not require authentication.
