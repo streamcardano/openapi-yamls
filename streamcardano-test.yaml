@@ -18,9 +18,6 @@ components:
               items:
                 $ref: '#/components/schemas/AppTrigger'
               type: array
-            network_name:
-              description: Name of the current connected Cardano network.
-              type: string
             pgbouncer_working:
               description: Wheter the postgres bouncer is online.
               type: boolean
@@ -34,7 +31,6 @@ components:
           - pgbouncer_working
           - database_triggers
           - app_version_info
-          - network_name
           type: object
       required:
       - result
