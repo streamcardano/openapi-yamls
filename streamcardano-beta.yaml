@@ -18,6 +18,9 @@ components:
               items:
                 $ref: '#/components/schemas/AppTrigger'
               type: array
+            network_name:
+              description: Name of the current connected Cardano network.
+              type: string
             pgbouncer_working:
               $ref: '#/components/schemas/ComponentStatus'
             postgres_working:
@@ -32,6 +35,7 @@ components:
           - database_triggers
           - wcontroller_status
           - app_version_info
+          - network_name
           type: object
       required:
       - result
