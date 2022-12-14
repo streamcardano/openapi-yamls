@@ -254,13 +254,6 @@ components:
       description: type is either int8 or str
       format: value:type
       type: string
-    PrometheusMetrics:
-      properties:
-        mainMetrics:
-          type: string
-      required:
-      - mainMetrics
-      type: object
     SqlDebugOutput:
       properties:
         errors:
