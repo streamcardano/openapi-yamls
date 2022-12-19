@@ -18,25 +18,20 @@ components:
               items:
                 $ref: '#/components/schemas/AppTrigger'
               type: array
-            network_name:
-              description: Name of the current connected Cardano network.
-              type: string
             pgbouncer_working:
-              $ref: '#/components/schemas/ComponentStatus'
+              description: Wheter the postgres bouncer is online.
+              type: boolean
             postgres_working:
-              $ref: '#/components/schemas/ComponentStatus'
-            sync_behind_by:
-              description: How much time is our Cardano node behind the network?
-              type: string
-            wcontroller_status:
-              $ref: '#/components/schemas/WalletControllerStatus'
+              description: Wheter the postgres database is online.
+              type: boolean
+            sync_status:
+              $ref: '#/components/schemas/DiffTime'
           required:
           - postgres_working
           - pgbouncer_working
           - database_triggers
-          - wcontroller_status
+          - sync_status
           - app_version_info
-          - network_name
           type: object
       required:
       - result
@@ -82,11 +77,6 @@ components:
       - TestEnv
       - BetaEnv
       type: string
-    ComponentStatus:
-      oneOf:
-      - type: string
-      - type: string
-      type: object
     CustomQueryResult:
       description: Results for custom queries. The particular row schema depends on
         the target database table.
@@ -331,7 +321,7 @@ components:
       - result
       - error
       type: object
-    WalletControllerStatus:
+    WalletDebugOutput:
       properties:
         errors:
           items:
@@ -341,15 +331,11 @@ components:
         result:
           properties:
             walletCount:
-              $ref: '#/components/schemas/ComponentStatus'
-            walletCreationCycle:
-              $ref: '#/components/schemas/ComponentStatus'
-            walletTestnetTransaction:
-              $ref: '#/components/schemas/ComponentStatus'
+              maximum: 9223372036854775807
+              minimum: -9223372036854775808
+              type: integer
           required:
           - walletCount
-          - walletCreationCycle
-          - walletTestnetTransaction
           type: object
       required:
       - result
@@ -422,6 +408,17 @@ paths:
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
+  /api/v1/debug/wallet:
+    post:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/WalletDebugOutput'
+          description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Retrieve status data about the wallet controller.'
   /api/v1/last/block:
     get:
       responses:
