@@ -25,8 +25,9 @@ components:
               $ref: '#/components/schemas/ComponentStatus'
             postgres_working:
               $ref: '#/components/schemas/ComponentStatus'
-            sync_status:
-              $ref: '#/components/schemas/DiffTime'
+            sync_behind_by:
+              description: How much time is our Cardano node behind the network?
+              type: string
             wcontroller_status:
               $ref: '#/components/schemas/WalletControllerStatus'
           required:
