@@ -18,20 +18,24 @@ components:
               items:
                 $ref: '#/components/schemas/AppTrigger'
               type: array
+            network_name:
+              description: Name of the current connected Cardano network.
+              type: string
             pgbouncer_working:
-              description: Wheter the postgres bouncer is online.
-              type: boolean
+              $ref: '#/components/schemas/ComponentStatus'
             postgres_working:
-              description: Wheter the postgres database is online.
-              type: boolean
+              $ref: '#/components/schemas/ComponentStatus'
             sync_status:
               $ref: '#/components/schemas/DiffTime'
+            wcontroller_status:
+              $ref: '#/components/schemas/WalletControllerStatus'
           required:
           - postgres_working
           - pgbouncer_working
           - database_triggers
-          - sync_status
+          - wcontroller_status
           - app_version_info
+          - network_name
           type: object
       required:
       - result
@@ -60,6 +64,13 @@ components:
         app_commit:
           description: Current commit hash of this backend application.
           type: string
+        app_commit_time:
+          type: string
+        app_compile_time:
+          type: string
+        app_up_time:
+          description: Human-friendly up time of this backend application.
+          type: string
         app_version:
           description: Current version of this backend application.
           type: string
@@ -68,7 +79,10 @@ components:
       required:
       - app_version
       - app_commit
+      - app_commit_time
       - env_name
+      - app_compile_time
+      - app_up_time
       type: object
     BuildEnvironment:
       enum:
@@ -77,6 +91,11 @@ components:
       - TestEnv
       - BetaEnv
       type: string
+    ComponentStatus:
+      oneOf:
+      - type: string
+      - type: string
+      type: object
     CustomQueryResult:
       description: Results for custom queries. The particular row schema depends on
         the target database table.
@@ -321,7 +340,7 @@ components:
       - result
       - error
       type: object
-    WalletDebugOutput:
+    WalletControllerStatus:
       properties:
         errors:
           items:
@@ -331,11 +350,15 @@ components:
         result:
           properties:
             walletCount:
-              maximum: 9223372036854775807
-              minimum: -9223372036854775808
-              type: integer
+              $ref: '#/components/schemas/ComponentStatus'
+            walletCreationCycle:
+              $ref: '#/components/schemas/ComponentStatus'
+            walletTestnetTransaction:
+              $ref: '#/components/schemas/ComponentStatus'
           required:
           - walletCount
+          - walletCreationCycle
+          - walletTestnetTransaction
           type: object
       required:
       - result
@@ -408,17 +431,6 @@ paths:
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
-  /api/v1/debug/wallet:
-    post:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/WalletDebugOutput'
-          description: ''
-      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
-        operators. Retrieve status data about the wallet controller.'
   /api/v1/last/block:
     get:
       responses:
