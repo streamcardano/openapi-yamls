@@ -65,6 +65,13 @@ components:
         app_commit:
           description: Current commit hash of this backend application.
           type: string
+        app_commit_time:
+          type: string
+        app_compile_time:
+          type: string
+        app_up_time:
+          description: Human-friendly up time of this backend application.
+          type: string
         app_version:
           description: Current version of this backend application.
           type: string
@@ -73,7 +80,10 @@ components:
       required:
       - app_version
       - app_commit
+      - app_commit_time
       - env_name
+      - app_compile_time
+      - app_up_time
       type: object
     BuildEnvironment:
       enum:
