@@ -63,24 +63,20 @@ components:
       description: Version information about this backend application.
       properties:
         app_commit:
-          description: Current commit hash of this backend application.
-          type: string
+          $ref: '#/components/schemas/Commit'
         app_commit_time:
-          type: string
+          $ref: '#/components/schemas/HumanTimestamp'
         app_compile_time:
-          type: string
+          $ref: '#/components/schemas/Timestamp'
         app_up_time:
-          description: Human-friendly up time of this backend application.
-          type: string
+          $ref: '#/components/schemas/HumanTimeSince'
         app_version:
-          description: Current version of this backend application.
-          type: string
+          $ref: '#/components/schemas/Version'
         env_name:
           $ref: '#/components/schemas/BuildEnvironment'
       required:
       - app_version
       - app_commit
-      - app_commit_time
       - env_name
       - app_compile_time
       - app_up_time
@@ -91,6 +87,8 @@ components:
       - StagingEnv
       - TestEnv
       - BetaEnv
+      type: string
+    Commit:
       type: string
     ComponentStatus:
       oneOf:
@@ -236,6 +234,12 @@ components:
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
       type: string
+    HumanTimeSince:
+      multipleOf: 1.0e-12
+      type: number
+    HumanTimestamp:
+      multipleOf: 1.0e-12
+      type: number
     InvalidQueryError:
       properties:
         errors:
@@ -341,6 +345,12 @@ components:
       - result
       - error
       type: object
+    Timestamp:
+      example: 2016-07-22T00:00:00Z
+      format: yyyy-mm-ddThh:MM:ssZ
+      type: string
+    Version:
+      type: string
     WalletControllerStatus:
       properties:
         errors:
