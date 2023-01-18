@@ -66,17 +66,23 @@ components:
       description: Version information about this backend application.
       properties:
         app_commit:
-          description: Current commit hash of this backend application.
-          type: string
+          $ref: '#/components/schemas/CommitHash'
+        app_commit_time:
+          $ref: '#/components/schemas/RelativeTimestamp'
+        app_compile_time:
+          $ref: '#/components/schemas/Timestamp'
+        app_up_time:
+          $ref: '#/components/schemas/TimeSince'
         app_version:
-          description: Current version of this backend application.
-          type: string
+          $ref: '#/components/schemas/Version'
         env_name:
           $ref: '#/components/schemas/BuildEnvironment'
       required:
       - app_version
       - app_commit
       - env_name
+      - app_compile_time
+      - app_up_time
       type: object
     BuildEnvironment:
       enum:
@@ -84,6 +90,8 @@ components:
       - StagingEnv
       - TestEnv
       - BetaEnv
+      type: string
+    CommitHash:
       type: string
     ComponentStatus:
       oneOf:
@@ -269,6 +277,9 @@ components:
       required:
       - mainMetrics
       type: object
+    RelativeTimestamp:
+      multipleOf: 1.0e-12
+      type: number
     SqlDebugOutput:
       properties:
         errors:
@@ -334,6 +345,15 @@ components:
       - result
       - error
       type: object
+    TimeSince:
+      multipleOf: 1.0e-12
+      type: number
+    Timestamp:
+      example: 2016-07-22T00:00:00Z
+      format: yyyy-mm-ddThh:MM:ssZ
+      type: string
+    Version:
+      type: string
     WalletControllerStatus:
       properties:
         errors:
