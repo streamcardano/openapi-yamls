@@ -1,3 +1,6 @@
+generating open api spec
+Postgres configuration: {"db":"cexplorer","host":"localhost","pgbouncer_host":"localhost","pgbouncer_port":"5432","port":"5432","user":"postgres"}
+Redis configuration: {"host":"localhost","port":"PortNumber 6379"}
 components:
   schemas:
     AppStatus:
@@ -25,8 +28,9 @@ components:
               $ref: '#/components/schemas/ComponentStatus'
             postgres_working:
               $ref: '#/components/schemas/ComponentStatus'
-            sync_status:
-              $ref: '#/components/schemas/DiffTime'
+            sync_behind_by:
+              description: How much time is our Cardano node behind the network?
+              type: string
             wcontroller_status:
               $ref: '#/components/schemas/WalletControllerStatus'
           required:
