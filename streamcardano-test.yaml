@@ -229,19 +229,6 @@ components:
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
       type: string
-    HealthStatus:
-      description: Health information about the backend. Usually for automated deployment
-        monitoring.
-      properties:
-        trigger_connection_alive:
-          description: Wheter each trigger connection is still alive or reporting
-            errors.
-          items:
-            $ref: '#/components/schemas/ComponentStatus'
-          type: array
-      required:
-      - trigger_connection_alive
-      type: object
     InvalidQueryError:
       properties:
         errors:
@@ -580,13 +567,3 @@ paths:
                 $ref: '#/components/schemas/AppStatus'
           description: ''
       summary: Retrieve status information about the backend. Does not require authentication.
-  /health:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/HealthStatus'
-          description: ''
-      summary: Retrieve health information about the backend. Does not require authentication.
