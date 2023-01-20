@@ -263,12 +263,9 @@ components:
       format: value:type
       type: string
     PrometheusMetrics:
-      properties:
-        mainMetrics:
-          type: string
-      required:
-      - mainMetrics
-      type: object
+      description: Prometheus metrics that can be interpreted by the visualizer
+      format: Prometheus metrics format
+      type: string
     SqlDebugOutput:
       properties:
         errors:
