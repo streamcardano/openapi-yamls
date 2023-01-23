@@ -1,6 +1,3 @@
-generating open api spec
-Postgres configuration: {"db":"cexplorer","host":"localhost","pgbouncer_host":"localhost","pgbouncer_port":"5432","port":"5432","user":"postgres"}
-Redis configuration: {"host":"localhost","port":"PortNumber 6379"}
 components:
   schemas:
     AppStatus:
