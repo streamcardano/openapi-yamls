@@ -75,31 +75,6 @@ components:
       - app_commit
       - env_name
       type: object
-    Block:
-      properties:
-        block_no:
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          type: integer
-        hash:
-          type: string
-        id:
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          type: integer
-        time:
-          $ref: '#/components/schemas/LocalTime'
-      required:
-      - id
-      - block_no
-      - hash
-      - time
-      type: object
-    BlockchainOperation:
-      enum:
-      - NEWBLOCK
-      - ROLLBACK
-      type: string
     BuildEnvironment:
       enum:
       - ProductionEnv
@@ -280,10 +255,6 @@ components:
       - result
       - error
       type: object
-    LocalTime:
-      example: 2016-07-22T07:40:00
-      format: yyyy-mm-ddThh:MM:ss
-      type: string
     Param:
       description: type is either int8 or str
       format: value:type
@@ -389,31 +360,113 @@ info:
   version: '1.0'
 openapi: 3.0.0
 paths:
-  /api/v1/sse:
+  /api/v1/debug/query:
     post:
+      parameters:
+      - in: query
+        name: blocks
+        required: false
+        schema:
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          type: integer
+      - in: query
+        name: params
+        schema:
+          items:
+            description: value with the PG SQL type, currently we support either ':int8'
+              and ':str'
+            format: value:type
+            type: string
+          type: array
+      requestBody:
+        content:
+          text/plain;charset=utf-8:
+            schema:
+              type: string
       responses:
         '200':
           content:
-            text/event-stream:
+            application/json;charset=utf-8:
               schema:
-                description: A server-sent event stream. This isn't strictly compatible
-                  with OpenApi spec. Also see https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events
-                format: event-stream
-                items:
-                  properties:
-                    operation:
-                      $ref: '#/components/schemas/BlockchainOperation'
-                    record:
-                      $ref: '#/components/schemas/Block'
-                  required:
-                  - operation
-                  - record
-                  type: object
-                type: array
-          description: Returns events describing new blocks
-      summary: Listen to new blocks on the chain
-    summary: Server-sent events for new blocks
-  /api/v1/sse/blocks: {}
+                $ref: '#/components/schemas/SqlDebugOutput'
+          description: ''
+        '400':
+          description: Invalid `params` or `blocks` or `body`
+        '422':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/InvalidQueryError'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Run a custom database query and retrieve its results along with
+        aditional debug information.'
+  /api/v1/debug/sync_status/behind_by:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/DiffTime'
+          description: ''
+      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
+        operators. Check by how much time our Cardano node is behind the network.'
+  /api/v1/last/block:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+          description: ''
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the number of the last block.'
+  /api/v1/last/slot_no:
+    get:
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
+          description: ''
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the number of the last slot.'
+  /api/v1/last/tx:
+    get:
+      parameters:
+      - in: query
+        name: script
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: string
+          description: ''
+        '400':
+          description: Invalid `script`
+      summary: 'Default database query endpoint, for basic information about the network.
+        Requires Dev, Production or Staging access: callable via software or human
+        operators. Get the last transaction hash.'
   /api/v1/query:
     post:
       parameters:
@@ -475,65 +528,7 @@ paths:
       summary: 'Custom database query endpoint. Requires Dev, Production or Staging
         access: callable via software or human operators. Run a custom database query
         and retrieve its results.'
-  /api/v1/status:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/AppStatus'
-          description: ''
-      summary: Retrieve status information about the backend. Does not require authentication.
-  /api/v1/last/block:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-          description: ''
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the number of the last block.'
-  /api/v1/last/slot_no:
-    get:
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
-          description: ''
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the number of the last slot.'
-  /api/v1/last/tx:
-    get:
-      parameters:
-      - in: query
-        name: script
-        required: false
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                type: string
-          description: ''
-        '400':
-          description: Invalid `script`
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the last transaction hash.'
-  /api/v1/stream:
+  /api/v1/sse:
     post:
       responses:
         '200':
@@ -545,74 +540,27 @@ paths:
                 format: event-stream
                 items:
                   properties:
-                    operation:
-                      $ref: '#/components/schemas/BlockchainOperation'
-                    record:
-                      $ref: '#/components/schemas/Block'
-                  required:
-                  - operation
-                  - record
+                    data:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    event:
+                      enum:
+                      - new_block
+                      - rollback
+                      type: string
                   type: object
                 type: array
           description: Returns events describing new blocks
       summary: Listen to new blocks on the chain
     summary: Server-sent events for new blocks
-  /api/v1/debug/query:
-    post:
-      parameters:
-      - in: query
-        name: blocks
-        required: false
-        schema:
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          type: integer
-      - in: query
-        name: params
-        schema:
-          items:
-            description: value with the PG SQL type, currently we support either ':int8'
-              and ':str'
-            format: value:type
-            type: string
-          type: array
-      requestBody:
-        content:
-          text/plain;charset=utf-8:
-            schema:
-              type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/SqlDebugOutput'
-          description: ''
-        '400':
-          description: Invalid `params` or `blocks` or `body`
-        '422':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/InvalidQueryError'
-          description: ''
-        '500':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/SqlQueryError'
-          description: ''
-      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
-        operators. Run a custom database query and retrieve its results along with
-        aditional debug information.'
-  /api/v1/debug/sync_status/behind_by:
+  /api/v1/sse/blocks: {}
+  /api/v1/status:
     get:
       responses:
         '200':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/DiffTime'
+                $ref: '#/components/schemas/AppStatus'
           description: ''
-      summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
-        operators. Check by how much time our Cardano node is behind the network.'
+      summary: Retrieve status information about the backend. Does not require authentication.
