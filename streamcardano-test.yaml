@@ -564,3 +564,28 @@ paths:
                 $ref: '#/components/schemas/AppStatus'
           description: ''
       summary: Retrieve status information about the backend. Does not require authentication.
+  /api/v1/stream:
+    post:
+      responses:
+        '200':
+          content:
+            text/event-stream:
+              schema:
+                description: A server-sent event stream. This isn't strictly compatible
+                  with OpenApi spec. Also see https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events
+                format: event-stream
+                items:
+                  properties:
+                    data:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    event:
+                      enum:
+                      - new_block
+                      - rollback
+                      type: string
+                  type: object
+                type: array
+          description: Returns events describing new blocks
+      summary: Listen to new blocks on the chain
+    summary: Server-sent events for new blocks
