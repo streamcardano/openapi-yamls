@@ -65,11 +65,11 @@ components:
         app_commit:
           $ref: '#/components/schemas/CommitHash'
         app_commit_time:
-          $ref: '#/components/schemas/RelativeTimestamp'
+          $ref: '#/components/schemas/TimestampAndAge'
         app_compile_time:
           $ref: '#/components/schemas/UTCTimestamp'
         app_up_time:
-          $ref: '#/components/schemas/TimeSince'
+          $ref: '#/components/schemas/TimestampAndAge'
         app_version:
           $ref: '#/components/schemas/Version'
         env_name:
@@ -300,9 +300,6 @@ components:
       description: Prometheus metrics that can be interpreted by the visualizer
       format: Prometheus metrics format
       type: string
-    RelativeTimestamp:
-      multipleOf: 1.0e-12
-      type: number
     SqlDebugOutput:
       properties:
         errors:
@@ -368,9 +365,20 @@ components:
       - result
       - error
       type: object
-    TimeSince:
-      multipleOf: 1.0e-12
-      type: number
+    TimestampAndAge:
+      properties:
+        absolute:
+          $ref: '#/components/schemas/UTCTime'
+        relative:
+          type: string
+      required:
+      - absolute
+      - relative
+      type: object
+    UTCTime:
+      example: 2016-07-22T00:00:00Z
+      format: yyyy-mm-ddThh:MM:ssZ
+      type: string
     UTCTimestamp:
       example: 2016-07-22T00:00:00Z
       format: yyyy-mm-ddThh:MM:ssZ
