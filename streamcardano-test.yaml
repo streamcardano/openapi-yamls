@@ -63,23 +63,17 @@ components:
       description: Version information about this backend application.
       properties:
         app_commit:
-          $ref: '#/components/schemas/CommitHash'
-        app_commit_time:
-          $ref: '#/components/schemas/TimestampAndAge'
-        app_compile_time:
-          $ref: '#/components/schemas/UTCTimestamp'
-        app_up_time:
-          $ref: '#/components/schemas/TimestampAndAge'
+          description: Current commit hash of this backend application.
+          type: string
         app_version:
-          $ref: '#/components/schemas/Version'
+          description: Current version of this backend application.
+          type: string
         env_name:
           $ref: '#/components/schemas/BuildEnvironment'
       required:
       - app_version
       - app_commit
       - env_name
-      - app_compile_time
-      - app_up_time
       type: object
     Block:
       properties:
@@ -112,8 +106,6 @@ components:
       - StagingEnv
       - TestEnv
       - BetaEnv
-      type: string
-    CommitHash:
       type: string
     ComponentStatus:
       oneOf:
@@ -365,26 +357,6 @@ components:
       - result
       - error
       type: object
-    TimestampAndAge:
-      properties:
-        absolute:
-          $ref: '#/components/schemas/UTCTime'
-        relative:
-          type: string
-      required:
-      - absolute
-      - relative
-      type: object
-    UTCTime:
-      example: 2016-07-22T00:00:00Z
-      format: yyyy-mm-ddThh:MM:ssZ
-      type: string
-    UTCTimestamp:
-      example: 2016-07-22T00:00:00Z
-      format: yyyy-mm-ddThh:MM:ssZ
-      type: string
-    Version:
-      type: string
     WalletControllerStatus:
       properties:
         errors:
