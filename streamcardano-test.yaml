@@ -398,12 +398,12 @@ components:
               $ref: '#/components/schemas/ComponentStatus'
             walletCreationCycle:
               $ref: '#/components/schemas/ComponentStatus'
-            walletTestnetTransaction:
+            walletTransactionTest:
               $ref: '#/components/schemas/ComponentStatus'
           required:
           - walletCount
           - walletCreationCycle
-          - walletTestnetTransaction
+          - walletTransactionTest
           type: object
       required:
       - result
