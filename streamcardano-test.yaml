@@ -67,7 +67,7 @@ components:
         app_commit_time:
           $ref: '#/components/schemas/TimestampAndAge'
         app_compile_time:
-          $ref: '#/components/schemas/UTCTimestamp'
+          $ref: '#/components/schemas/TimestampAndAge'
         app_up_time:
           $ref: '#/components/schemas/TimestampAndAge'
         app_version:
@@ -376,10 +376,6 @@ components:
       - relative
       type: object
     UTCTime:
-      example: 2016-07-22T00:00:00Z
-      format: yyyy-mm-ddThh:MM:ssZ
-      type: string
-    UTCTimestamp:
       example: 2016-07-22T00:00:00Z
       format: yyyy-mm-ddThh:MM:ssZ
       type: string
