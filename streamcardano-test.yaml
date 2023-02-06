@@ -292,13 +292,6 @@ components:
       example: 2016-07-22T07:40:00
       format: yyyy-mm-ddThh:MM:ss
       type: string
-    NewToken:
-      properties:
-        jwtToken:
-          type: string
-      required:
-      - jwtToken
-      type: object
     Param:
       description: type is either int8 or str
       format: value:type
@@ -381,13 +374,6 @@ components:
       required:
       - absolute
       - relative
-      type: object
-    TokenRequest:
-      properties:
-        postgrestToken:
-          type: string
-      required:
-      - postgrestToken
       type: object
     UTCTime:
       example: 2016-07-22T00:00:00Z
@@ -595,23 +581,6 @@ paths:
           description: Returns events describing new blocks
       summary: Listen to new blocks on the chain
     summary: Server-sent events for new blocks
-  /api/v1/token:
-    post:
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/TokenRequest'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/NewToken'
-          description: ''
-        '400':
-          description: Invalid `body`
-      summary: Issue a new JWT token for the requesting user.
   /api/v1/debug/query:
     post:
       parameters:
