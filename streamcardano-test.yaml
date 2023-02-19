@@ -292,6 +292,13 @@ components:
       example: 2016-07-22T07:40:00
       format: yyyy-mm-ddThh:MM:ss
       type: string
+    NewToken:
+      properties:
+        jwtToken:
+          type: string
+      required:
+      - jwtToken
+      type: object
     Param:
       description: type is either int8 or str
       format: value:type
@@ -375,6 +382,13 @@ components:
       - absolute
       - relative
       type: object
+    TokenRequest:
+      properties:
+        tokenUserId:
+          type: integer
+      required:
+      - tokenUserId
+      type: object
     UTCTime:
       example: 2016-07-22T00:00:00Z
       format: yyyy-mm-ddThh:MM:ssZ
@@ -390,16 +404,16 @@ components:
           type: array
         result:
           properties:
-            walletCount:
+            count:
               $ref: '#/components/schemas/ComponentStatus'
-            walletCreationCycle:
+            creation_cycle:
               $ref: '#/components/schemas/ComponentStatus'
-            walletTransactionTest:
+            transaction_test:
               $ref: '#/components/schemas/ComponentStatus'
           required:
-          - walletCount
-          - walletCreationCycle
-          - walletTransactionTest
+          - count
+          - creation_cycle
+          - transaction_test
           type: object
       required:
       - result
@@ -410,7 +424,7 @@ info:
   license:
     name: MIT
   title: StreamCardano API
-  version: 0.7.3.0
+  version: 0.7.4.0
 openapi: 3.0.0
 paths:
   /api/v1/sse:
@@ -581,6 +595,29 @@ paths:
           description: Returns events describing new blocks
       summary: Listen to new blocks on the chain
     summary: Server-sent events for new blocks
+  /api/v1/token:
+    post:
+      parameters:
+      - in: header
+        name: Cookie
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/NewToken'
+          description: ''
+        '400':
+          description: Invalid `body` or `Cookie`
+      summary: Issue a new JWT token for the requesting user.
   /api/v1/debug/query:
     post:
       parameters:
