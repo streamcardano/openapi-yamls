@@ -8,39 +8,50 @@ components:
             title: JSON
           type: array
         result:
-          description: Status information about this backend application and attached
-            services.
           properties:
-            app_version_info:
-              $ref: '#/components/schemas/AppVersion'
-            database_triggers:
-              description: Database triggers set for the application.
+            errors:
               items:
-                $ref: '#/components/schemas/AppTrigger'
+                description: Arbitrary JSON value
+                title: JSON
               type: array
-            network_name:
-              description: Name of the current connected Cardano network.
-              type: string
-            pgbouncer_working:
-              $ref: '#/components/schemas/ComponentStatus'
-            postgres_working:
-              $ref: '#/components/schemas/ComponentStatus'
-            sync_behind_by:
-              description: How much time is our Cardano node behind the network?
-              type: string
-            wcontroller_status:
-              $ref: '#/components/schemas/WalletControllerStatus'
+            result:
+              description: Status information about this backend application and attached
+                services.
+              properties:
+                app_version_info:
+                  $ref: '#/components/schemas/AppVersion'
+                database_triggers:
+                  description: Database triggers set for the application.
+                  items:
+                    $ref: '#/components/schemas/AppTrigger'
+                  type: array
+                network_name:
+                  description: Name of the current connected Cardano network.
+                  type: string
+                pgbouncer_working:
+                  $ref: '#/components/schemas/ComponentStatus'
+                postgres_working:
+                  $ref: '#/components/schemas/ComponentStatus'
+                sync_behind_by:
+                  description: How much time is our Cardano node behind the network?
+                  type: string
+                wcontroller_status:
+                  $ref: '#/components/schemas/WalletControllerStatus'
+              required:
+              - postgres_working
+              - pgbouncer_working
+              - database_triggers
+              - wcontroller_status
+              - app_version_info
+              - network_name
+              type: object
           required:
-          - postgres_working
-          - pgbouncer_working
-          - database_triggers
-          - wcontroller_status
-          - app_version_info
-          - network_name
+          - result
+          - errors
           type: object
       required:
       - result
-      - error
+      - errors
       type: object
     AppTrigger:
       description: Properties of each loaded database trigger.
@@ -286,7 +297,7 @@ components:
           type: array
       required:
       - result
-      - error
+      - errors
       type: object
     LocalTime:
       example: 2016-07-22T07:40:00
@@ -345,7 +356,7 @@ components:
           type: object
       required:
       - result
-      - error
+      - errors
       type: object
     SqlQueryError:
       properties:
@@ -363,7 +374,7 @@ components:
           type: array
       required:
       - result
-      - error
+      - errors
       type: object
     TimestampAndAge:
       properties:
@@ -403,7 +414,7 @@ components:
           type: object
       required:
       - result
-      - error
+      - errors
       type: object
 info:
   description: This is an API for the StreamCardano service
@@ -479,7 +490,7 @@ paths:
                     type: array
                 required:
                 - result
-                - error
+                - errors
                 type: object
           description: ''
         '400':
