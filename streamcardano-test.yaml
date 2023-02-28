@@ -257,8 +257,19 @@ components:
         title: JSON
       type: object
     DiffTime:
-      format: PyYmMdDThHmMs[.sss]S
-      type: string
+      properties:
+        errors:
+          items:
+            description: Arbitrary JSON value
+            title: JSON
+          type: array
+        result:
+          format: PyYmMdDThHmMs[.sss]S
+          type: string
+      required:
+      - result
+      - error
+      type: object
     InvalidQueryError:
       properties:
         errors:
@@ -308,40 +319,51 @@ components:
             title: JSON
           type: array
         result:
-          description: Debug information on a custom SQL database query.
           properties:
-            compile_time:
-              description: Time to compile the SQL query, in seconds.
-              format: double
-              type: number
-            explain:
-              description: PostgreSQL explanation of the query.
+            errors:
               items:
-                type: string
+                description: Arbitrary JSON value
+                title: JSON
               type: array
-            orig_sql:
-              description: Original SQL query, as sent in the request.
-              type: string
-            params:
-              description: Query parameters given as input.
-              items:
-                $ref: '#/components/schemas/Param'
-              type: array
-            results:
-              description: Query results.
-              items:
-                $ref: '#/components/schemas/CustomQueryResult'
-              type: array
-            sql:
-              description: Original SQL query, after parsing.
-              type: string
+            result:
+              description: Debug information on a custom SQL database query.
+              properties:
+                compile_time:
+                  description: Time to compile the SQL query, in seconds.
+                  format: double
+                  type: number
+                explain:
+                  description: PostgreSQL explanation of the query.
+                  items:
+                    type: string
+                  type: array
+                orig_sql:
+                  description: Original SQL query, as sent in the request.
+                  type: string
+                params:
+                  description: Query parameters given as input.
+                  items:
+                    $ref: '#/components/schemas/Param'
+                  type: array
+                results:
+                  description: Query results.
+                  items:
+                    $ref: '#/components/schemas/CustomQueryResult'
+                  type: array
+                sql:
+                  description: Original SQL query, after parsing.
+                  type: string
+              required:
+              - sql
+              - orig_sql
+              - params
+              - compile_time
+              - explain
+              - results
+              type: object
           required:
-          - sql
-          - orig_sql
-          - params
-          - compile_time
-          - explain
-          - results
+          - result
+          - error
           type: object
       required:
       - result
@@ -516,13 +538,30 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    maximum: 9223372036854775807
+                    minimum: -9223372036854775808
+                    type: integer
+                required:
+                - result
+                - error
+                type: object
           description: ''
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the number of the last block.'
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
+      summary: Default database query endpoint, for basic information about the network.
+        Unauthenticated users can access this endpoint. Get the number of the last
+        block.
   /api/v1/last/slot_no:
     get:
       responses:
@@ -530,13 +569,30 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    maximum: 9223372036854775807
+                    minimum: -9223372036854775808
+                    type: integer
+                required:
+                - result
+                - error
+                type: object
           description: ''
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the number of the last slot.'
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
+      summary: Default database query endpoint, for basic information about the network.
+        Unauthenticated users can access this endpoint. Get the number of the last
+        slot.
   /api/v1/last/tx:
     get:
       parameters:
@@ -550,13 +606,29 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                type: string
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    type: string
+                required:
+                - result
+                - error
+                type: object
           description: ''
         '400':
           description: Invalid `script`
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the last transaction hash.'
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
+      summary: Default database query endpoint, for basic information about the network.
+        Unauthenticated users can access this endpoint. Get the last transaction hash.
   /api/v1/stream:
     post:
       responses:
@@ -637,6 +709,12 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/DiffTime'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
