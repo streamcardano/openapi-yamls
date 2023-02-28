@@ -1,65 +1,46 @@
 components:
   schemas:
-    ApiResult_AppStatus:
-      description: Base response structure. Wraps the result and may also contain
-        error messages.
-      properties:
-        errors:
-          items:
-            $ref: '#/components/schemas/Warning'
-          type: array
-        result:
-          $ref: '#/components/schemas/AppStatus'
-      required:
-      - errors
-      - result
-      type: object
-    ApiResult_[CustomQueryResult]:
-      description: Base response structure. Wraps the result and may also contain
-        error messages.
-      properties:
-        errors:
-          items:
-            $ref: '#/components/schemas/Warning'
-          type: array
-        result:
-          items:
-            $ref: '#/components/schemas/CustomQueryResult'
-          type: array
-      required:
-      - errors
-      - result
-      type: object
     AppStatus:
-      description: Status information about this backend application and attached
-        services.
       properties:
-        app_version_info:
-          $ref: '#/components/schemas/AppVersion'
-        database_triggers:
-          description: Database triggers set for the application.
+        errors:
           items:
-            $ref: '#/components/schemas/AppTrigger'
+            description: Arbitrary JSON value
+            title: JSON
           type: array
-        network_name:
-          description: Name of the current connected Cardano network.
-          type: string
-        pgbouncer_working:
-          $ref: '#/components/schemas/ComponentStatus'
-        postgres_working:
-          $ref: '#/components/schemas/ComponentStatus'
-        sync_behind_by:
-          description: How much time is our Cardano node behind the network?
-          type: string
-        wcontroller_status:
-          $ref: '#/components/schemas/WalletControllerStatus'
+        result:
+          description: Status information about this backend application and attached
+            services.
+          properties:
+            app_version_info:
+              $ref: '#/components/schemas/AppVersion'
+            database_triggers:
+              description: Database triggers set for the application.
+              items:
+                $ref: '#/components/schemas/AppTrigger'
+              type: array
+            network_name:
+              description: Name of the current connected Cardano network.
+              type: string
+            pgbouncer_working:
+              $ref: '#/components/schemas/ComponentStatus'
+            postgres_working:
+              $ref: '#/components/schemas/ComponentStatus'
+            sync_behind_by:
+              description: How much time is our Cardano node behind the network?
+              type: string
+            wcontroller_status:
+              $ref: '#/components/schemas/WalletControllerStatus'
+          required:
+          - postgres_working
+          - pgbouncer_working
+          - database_triggers
+          - wcontroller_status
+          - app_version_info
+          - network_name
+          type: object
       required:
-      - postgres_working
-      - pgbouncer_working
-      - database_triggers
-      - wcontroller_status
-      - app_version_info
-      - network_name
+      - result
+      - error
       type: object
     AppTrigger:
       description: Properties of each loaded database trigger.
@@ -305,7 +286,7 @@ components:
           type: array
       required:
       - result
-      - errors
+      - error
       type: object
     LocalTime:
       example: 2016-07-22T07:40:00
@@ -364,7 +345,7 @@ components:
           type: object
       required:
       - result
-      - errors
+      - error
       type: object
     SqlQueryError:
       properties:
@@ -382,7 +363,7 @@ components:
           type: array
       required:
       - result
-      - errors
+      - error
       type: object
     TimestampAndAge:
       properties:
@@ -422,15 +403,7 @@ components:
           type: object
       required:
       - result
-      - errors
-      type: object
-    Warning:
-      description: Warnings that can be sent along with sucessful responses.
-      properties:
-        message:
-          type: string
-      required:
-      - message
+      - error
       type: object
 info:
   description: This is an API for the StreamCardano service
@@ -494,7 +467,20 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[CustomQueryResult]'
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    items:
+                      $ref: '#/components/schemas/CustomQueryResult'
+                    type: array
+                required:
+                - result
+                - error
+                type: object
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -520,7 +506,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_AppStatus'
+                $ref: '#/components/schemas/AppStatus'
           description: ''
       summary: Retrieve status information about the backend. Does not require authentication.
   /api/v1/last/block:
