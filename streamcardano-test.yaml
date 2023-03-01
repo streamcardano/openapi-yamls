@@ -1,65 +1,46 @@
 components:
   schemas:
-    ApiResult_AppStatus:
-      description: Base response structure. Wraps the result and may also contain
-        error messages.
-      properties:
-        errors:
-          items:
-            $ref: '#/components/schemas/Warning'
-          type: array
-        result:
-          $ref: '#/components/schemas/AppStatus'
-      required:
-      - errors
-      - result
-      type: object
-    ApiResult_[CustomQueryResult]:
-      description: Base response structure. Wraps the result and may also contain
-        error messages.
-      properties:
-        errors:
-          items:
-            $ref: '#/components/schemas/Warning'
-          type: array
-        result:
-          items:
-            $ref: '#/components/schemas/CustomQueryResult'
-          type: array
-      required:
-      - errors
-      - result
-      type: object
     AppStatus:
-      description: Status information about this backend application and attached
-        services.
       properties:
-        app_version_info:
-          $ref: '#/components/schemas/AppVersion'
-        database_triggers:
-          description: Database triggers set for the application.
+        errors:
           items:
-            $ref: '#/components/schemas/AppTrigger'
+            description: Arbitrary JSON value
+            title: JSON
           type: array
-        network_name:
-          description: Name of the current connected Cardano network.
-          type: string
-        pgbouncer_working:
-          $ref: '#/components/schemas/ComponentStatus'
-        postgres_working:
-          $ref: '#/components/schemas/ComponentStatus'
-        sync_behind_by:
-          description: How much time is our Cardano node behind the network?
-          type: string
-        wcontroller_status:
-          $ref: '#/components/schemas/WalletControllerStatus'
+        result:
+          description: Status information about this backend application and attached
+            services.
+          properties:
+            app_version_info:
+              $ref: '#/components/schemas/AppVersion'
+            database_triggers:
+              description: Database triggers set for the application.
+              items:
+                $ref: '#/components/schemas/AppTrigger'
+              type: array
+            network_name:
+              description: Name of the current connected Cardano network.
+              type: string
+            pgbouncer_working:
+              $ref: '#/components/schemas/ComponentStatus'
+            postgres_working:
+              $ref: '#/components/schemas/ComponentStatus'
+            sync_behind_by:
+              description: How much time is our Cardano node behind the network?
+              type: string
+            wcontroller_status:
+              $ref: '#/components/schemas/WalletControllerStatus'
+          required:
+          - postgres_working
+          - pgbouncer_working
+          - database_triggers
+          - wcontroller_status
+          - app_version_info
+          - network_name
+          type: object
       required:
-      - postgres_working
-      - pgbouncer_working
-      - database_triggers
-      - wcontroller_status
-      - app_version_info
-      - network_name
+      - result
+      - error
       type: object
     AppTrigger:
       description: Properties of each loaded database trigger.
@@ -276,8 +257,19 @@ components:
         title: JSON
       type: object
     DiffTime:
-      format: PyYmMdDThHmMs[.sss]S
-      type: string
+      properties:
+        errors:
+          items:
+            description: Arbitrary JSON value
+            title: JSON
+          type: array
+        result:
+          format: PyYmMdDThHmMs[.sss]S
+          type: string
+      required:
+      - result
+      - error
+      type: object
     InvalidQueryError:
       properties:
         errors:
@@ -305,7 +297,7 @@ components:
           type: array
       required:
       - result
-      - errors
+      - error
       type: object
     LocalTime:
       example: 2016-07-22T07:40:00
@@ -327,44 +319,55 @@ components:
             title: JSON
           type: array
         result:
-          description: Debug information on a custom SQL database query.
           properties:
-            compile_time:
-              description: Time to compile the SQL query, in seconds.
-              format: double
-              type: number
-            explain:
-              description: PostgreSQL explanation of the query.
+            errors:
               items:
-                type: string
+                description: Arbitrary JSON value
+                title: JSON
               type: array
-            orig_sql:
-              description: Original SQL query, as sent in the request.
-              type: string
-            params:
-              description: Query parameters given as input.
-              items:
-                $ref: '#/components/schemas/Param'
-              type: array
-            results:
-              description: Query results.
-              items:
-                $ref: '#/components/schemas/CustomQueryResult'
-              type: array
-            sql:
-              description: Original SQL query, after parsing.
-              type: string
+            result:
+              description: Debug information on a custom SQL database query.
+              properties:
+                compile_time:
+                  description: Time to compile the SQL query, in seconds.
+                  format: double
+                  type: number
+                explain:
+                  description: PostgreSQL explanation of the query.
+                  items:
+                    type: string
+                  type: array
+                orig_sql:
+                  description: Original SQL query, as sent in the request.
+                  type: string
+                params:
+                  description: Query parameters given as input.
+                  items:
+                    $ref: '#/components/schemas/Param'
+                  type: array
+                results:
+                  description: Query results.
+                  items:
+                    $ref: '#/components/schemas/CustomQueryResult'
+                  type: array
+                sql:
+                  description: Original SQL query, after parsing.
+                  type: string
+              required:
+              - sql
+              - orig_sql
+              - params
+              - compile_time
+              - explain
+              - results
+              type: object
           required:
-          - sql
-          - orig_sql
-          - params
-          - compile_time
-          - explain
-          - results
+          - result
+          - error
           type: object
       required:
       - result
-      - errors
+      - error
       type: object
     SqlQueryError:
       properties:
@@ -382,7 +385,7 @@ components:
           type: array
       required:
       - result
-      - errors
+      - error
       type: object
     TimestampAndAge:
       properties:
@@ -422,15 +425,7 @@ components:
           type: object
       required:
       - result
-      - errors
-      type: object
-    Warning:
-      description: Warnings that can be sent along with sucessful responses.
-      properties:
-        message:
-          type: string
-      required:
-      - message
+      - error
       type: object
 info:
   description: This is an API for the StreamCardano service
@@ -494,7 +489,20 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[CustomQueryResult]'
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    items:
+                      $ref: '#/components/schemas/CustomQueryResult'
+                    type: array
+                required:
+                - result
+                - error
+                type: object
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -520,7 +528,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_AppStatus'
+                $ref: '#/components/schemas/AppStatus'
           description: ''
       summary: Retrieve status information about the backend. Does not require authentication.
   /api/v1/last/block:
@@ -530,9 +538,26 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    maximum: 9223372036854775807
+                    minimum: -9223372036854775808
+                    type: integer
+                required:
+                - result
+                - error
+                type: object
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -544,9 +569,26 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    maximum: 9223372036854775807
+                    minimum: -9223372036854775808
+                    type: integer
+                required:
+                - result
+                - error
+                type: object
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -564,10 +606,27 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                type: string
+                properties:
+                  errors:
+                    items:
+                      description: Arbitrary JSON value
+                      title: JSON
+                    type: array
+                  result:
+                    type: string
+                required:
+                - result
+                - error
+                type: object
           description: ''
         '400':
           description: Invalid `script`
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the last transaction hash.
   /api/v1/stream:
@@ -650,6 +709,12 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/DiffTime'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
