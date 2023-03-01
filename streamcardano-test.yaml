@@ -257,19 +257,8 @@ components:
         title: JSON
       type: object
     DiffTime:
-      properties:
-        errors:
-          items:
-            description: Arbitrary JSON value
-            title: JSON
-          type: array
-        result:
-          format: PyYmMdDThHmMs[.sss]S
-          type: string
-      required:
-      - result
-      - error
-      type: object
+      format: PyYmMdDThHmMs[.sss]S
+      type: string
     InvalidQueryError:
       properties:
         errors:
@@ -319,51 +308,40 @@ components:
             title: JSON
           type: array
         result:
+          description: Debug information on a custom SQL database query.
           properties:
-            errors:
+            compile_time:
+              description: Time to compile the SQL query, in seconds.
+              format: double
+              type: number
+            explain:
+              description: PostgreSQL explanation of the query.
               items:
-                description: Arbitrary JSON value
-                title: JSON
+                type: string
               type: array
-            result:
-              description: Debug information on a custom SQL database query.
-              properties:
-                compile_time:
-                  description: Time to compile the SQL query, in seconds.
-                  format: double
-                  type: number
-                explain:
-                  description: PostgreSQL explanation of the query.
-                  items:
-                    type: string
-                  type: array
-                orig_sql:
-                  description: Original SQL query, as sent in the request.
-                  type: string
-                params:
-                  description: Query parameters given as input.
-                  items:
-                    $ref: '#/components/schemas/Param'
-                  type: array
-                results:
-                  description: Query results.
-                  items:
-                    $ref: '#/components/schemas/CustomQueryResult'
-                  type: array
-                sql:
-                  description: Original SQL query, after parsing.
-                  type: string
-              required:
-              - sql
-              - orig_sql
-              - params
-              - compile_time
-              - explain
-              - results
-              type: object
+            orig_sql:
+              description: Original SQL query, as sent in the request.
+              type: string
+            params:
+              description: Query parameters given as input.
+              items:
+                $ref: '#/components/schemas/Param'
+              type: array
+            results:
+              description: Query results.
+              items:
+                $ref: '#/components/schemas/CustomQueryResult'
+              type: array
+            sql:
+              description: Original SQL query, after parsing.
+              type: string
           required:
-          - result
-          - error
+          - sql
+          - orig_sql
+          - params
+          - compile_time
+          - explain
+          - results
           type: object
       required:
       - result
@@ -538,26 +516,9 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                properties:
-                  errors:
-                    items:
-                      description: Arbitrary JSON value
-                      title: JSON
-                    type: array
-                  result:
-                    maximum: 9223372036854775807
-                    minimum: -9223372036854775808
-                    type: integer
-                required:
-                - result
-                - error
-                type: object
-          description: ''
-        '500':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -569,26 +530,9 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                properties:
-                  errors:
-                    items:
-                      description: Arbitrary JSON value
-                      title: JSON
-                    type: array
-                  result:
-                    maximum: 9223372036854775807
-                    minimum: -9223372036854775808
-                    type: integer
-                required:
-                - result
-                - error
-                type: object
-          description: ''
-        '500':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                maximum: 9223372036854775807
+                minimum: -9223372036854775808
+                type: integer
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -606,27 +550,10 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                properties:
-                  errors:
-                    items:
-                      description: Arbitrary JSON value
-                      title: JSON
-                    type: array
-                  result:
-                    type: string
-                required:
-                - result
-                - error
-                type: object
+                type: string
           description: ''
         '400':
           description: Invalid `script`
-        '500':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/SqlQueryError'
-          description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the last transaction hash.
   /api/v1/stream:
@@ -709,12 +636,6 @@ paths:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/DiffTime'
-          description: ''
-        '500':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/SqlQueryError'
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
