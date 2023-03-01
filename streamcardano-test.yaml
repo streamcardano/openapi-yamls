@@ -14,6 +14,64 @@ components:
       - errors
       - result
       type: object
+    ApiResult_DiffTime:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          $ref: '#/components/schemas/DiffTime'
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_Int:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          type: integer
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_SqlDebugOutput:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          $ref: '#/components/schemas/SqlDebugOutput'
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_Text:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          type: string
+      required:
+      - errors
+      - result
+      type: object
     ApiResult_[CustomQueryResult]:
       description: Base response structure. Wraps the result and may also contain
         error messages.
@@ -530,9 +588,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                $ref: '#/components/schemas/ApiResult_Int'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -544,9 +606,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                $ref: '#/components/schemas/ApiResult_Int'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -564,10 +630,16 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                type: string
+                $ref: '#/components/schemas/ApiResult_Text'
           description: ''
         '400':
           description: Invalid `script`
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
+          description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the last transaction hash.
   /api/v1/stream:
@@ -623,7 +695,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlDebugOutput'
+                $ref: '#/components/schemas/ApiResult_SqlDebugOutput'
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -649,7 +721,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/DiffTime'
+                $ref: '#/components/schemas/ApiResult_DiffTime'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/SqlQueryError'
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
