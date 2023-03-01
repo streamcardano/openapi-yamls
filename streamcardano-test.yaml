@@ -520,9 +520,9 @@ paths:
                 minimum: -9223372036854775808
                 type: integer
           description: ''
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the number of the last block.'
+      summary: Default database query endpoint, for basic information about the network.
+        Unauthenticated users can access this endpoint. Get the number of the last
+        block.
   /api/v1/last/slot_no:
     get:
       responses:
@@ -534,9 +534,9 @@ paths:
                 minimum: -9223372036854775808
                 type: integer
           description: ''
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the number of the last slot.'
+      summary: Default database query endpoint, for basic information about the network.
+        Unauthenticated users can access this endpoint. Get the number of the last
+        slot.
   /api/v1/last/tx:
     get:
       parameters:
@@ -554,9 +554,8 @@ paths:
           description: ''
         '400':
           description: Invalid `script`
-      summary: 'Default database query endpoint, for basic information about the network.
-        Requires Dev, Production or Staging access: callable via software or human
-        operators. Get the last transaction hash.'
+      summary: Default database query endpoint, for basic information about the network.
+        Unauthenticated users can access this endpoint. Get the last transaction hash.
   /api/v1/stream:
     post:
       responses:
