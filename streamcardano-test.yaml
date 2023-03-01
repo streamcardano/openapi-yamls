@@ -1,46 +1,153 @@
 components:
   schemas:
-    AppStatus:
+    ApiResult_InvalidQueryError_():
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          $ref: '#/components/schemas/InvalidQueryError'
+        result:
+          example: []
+          items: {}
+          maxItems: 0
+          type: array
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_SqlQueryError_():
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          $ref: '#/components/schemas/SqlQueryError'
+        result:
+          example: []
+          items: {}
+          maxItems: 0
+          type: array
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_[Warning]_AppStatus:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
       properties:
         errors:
           items:
-            description: Arbitrary JSON value
-            title: JSON
+            $ref: '#/components/schemas/Warning'
           type: array
         result:
-          description: Status information about this backend application and attached
-            services.
-          properties:
-            app_version_info:
-              $ref: '#/components/schemas/AppVersion'
-            database_triggers:
-              description: Database triggers set for the application.
-              items:
-                $ref: '#/components/schemas/AppTrigger'
-              type: array
-            network_name:
-              description: Name of the current connected Cardano network.
-              type: string
-            pgbouncer_working:
-              $ref: '#/components/schemas/ComponentStatus'
-            postgres_working:
-              $ref: '#/components/schemas/ComponentStatus'
-            sync_behind_by:
-              description: How much time is our Cardano node behind the network?
-              type: string
-            wcontroller_status:
-              $ref: '#/components/schemas/WalletControllerStatus'
-          required:
-          - postgres_working
-          - pgbouncer_working
-          - database_triggers
-          - wcontroller_status
-          - app_version_info
-          - network_name
-          type: object
+          $ref: '#/components/schemas/AppStatus'
       required:
+      - errors
       - result
-      - error
+      type: object
+    ApiResult_[Warning]_DiffTime:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          $ref: '#/components/schemas/DiffTime'
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_[Warning]_Int:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          type: integer
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_[Warning]_SqlDebugOutput:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          $ref: '#/components/schemas/SqlDebugOutput'
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_[Warning]_Text:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          type: string
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_[Warning]_[CustomQueryResult]:
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Warning'
+          type: array
+        result:
+          items:
+            $ref: '#/components/schemas/CustomQueryResult'
+          type: array
+      required:
+      - errors
+      - result
+      type: object
+    AppStatus:
+      description: Status information about this backend application and attached
+        services.
+      properties:
+        app_version_info:
+          $ref: '#/components/schemas/AppVersion'
+        database_triggers:
+          description: Database triggers set for the application.
+          items:
+            $ref: '#/components/schemas/AppTrigger'
+          type: array
+        network_name:
+          description: Name of the current connected Cardano network.
+          type: string
+        pgbouncer_working:
+          $ref: '#/components/schemas/ComponentStatus'
+        postgres_working:
+          $ref: '#/components/schemas/ComponentStatus'
+        sync_behind_by:
+          description: How much time is our Cardano node behind the network?
+          type: string
+        wcontroller_status:
+          $ref: '#/components/schemas/WalletControllerStatus'
+      required:
+      - postgres_working
+      - pgbouncer_working
+      - database_triggers
+      - wcontroller_status
+      - app_version_info
+      - network_name
       type: object
     AppTrigger:
       description: Properties of each loaded database trigger.
@@ -286,7 +393,7 @@ components:
           type: array
       required:
       - result
-      - error
+      - errors
       type: object
     LocalTime:
       example: 2016-07-22T07:40:00
@@ -345,7 +452,7 @@ components:
           type: object
       required:
       - result
-      - error
+      - errors
       type: object
     SqlQueryError:
       properties:
@@ -363,7 +470,7 @@ components:
           type: array
       required:
       - result
-      - error
+      - errors
       type: object
     TimestampAndAge:
       properties:
@@ -383,27 +490,24 @@ components:
       type: string
     WalletControllerStatus:
       properties:
-        errors:
-          items:
-            description: Arbitrary JSON value
-            title: JSON
-          type: array
-        result:
-          properties:
-            count:
-              $ref: '#/components/schemas/ComponentStatus'
-            creation_cycle:
-              $ref: '#/components/schemas/ComponentStatus'
-            transaction_test:
-              $ref: '#/components/schemas/ComponentStatus'
-          required:
-          - count
-          - creation_cycle
-          - transaction_test
-          type: object
+        count:
+          $ref: '#/components/schemas/ComponentStatus'
+        creation_cycle:
+          $ref: '#/components/schemas/ComponentStatus'
+        transaction_test:
+          $ref: '#/components/schemas/ComponentStatus'
       required:
-      - result
-      - error
+      - count
+      - creation_cycle
+      - transaction_test
+      type: object
+    Warning:
+      description: Warnings that can be sent along with sucessful responses.
+      properties:
+        message:
+          type: string
+      required:
+      - message
       type: object
 info:
   description: This is an API for the StreamCardano service
@@ -467,20 +571,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                properties:
-                  errors:
-                    items:
-                      description: Arbitrary JSON value
-                      title: JSON
-                    type: array
-                  result:
-                    items:
-                      $ref: '#/components/schemas/CustomQueryResult'
-                    type: array
-                required:
-                - result
-                - error
-                type: object
+                $ref: '#/components/schemas/ApiResult_[Warning]_[CustomQueryResult]'
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -488,13 +579,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/InvalidQueryError'
+                $ref: '#/components/schemas/ApiResult_InvalidQueryError_()'
           description: ''
         '500':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: 'Custom database query endpoint. Requires Dev, Production or Staging
         access: callable via software or human operators. Run a custom database query
@@ -506,7 +597,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/AppStatus'
+                $ref: '#/components/schemas/ApiResult_[Warning]_AppStatus'
           description: ''
       summary: Retrieve status information about the backend. Does not require authentication.
   /api/v1/last/block:
@@ -516,9 +607,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                $ref: '#/components/schemas/ApiResult_[Warning]_Int'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -530,9 +625,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                maximum: 9223372036854775807
-                minimum: -9223372036854775808
-                type: integer
+                $ref: '#/components/schemas/ApiResult_[Warning]_Int'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -550,10 +649,16 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                type: string
+                $ref: '#/components/schemas/ApiResult_[Warning]_Text'
           description: ''
         '400':
           description: Invalid `script`
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
+          description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the last transaction hash.
   /api/v1/stream:
@@ -609,7 +714,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlDebugOutput'
+                $ref: '#/components/schemas/ApiResult_[Warning]_SqlDebugOutput'
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -617,13 +722,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/InvalidQueryError'
+                $ref: '#/components/schemas/ApiResult_InvalidQueryError_()'
           description: ''
         '500':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Run a custom database query and retrieve its results along with
@@ -635,7 +740,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/DiffTime'
+                $ref: '#/components/schemas/ApiResult_[Warning]_DiffTime'
+          description: ''
+        '500':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
