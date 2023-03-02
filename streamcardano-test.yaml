@@ -1,6 +1,36 @@
 components:
   schemas:
-    ApiResult_AppStatus:
+    ApiResult_InvalidQueryError_():
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          $ref: '#/components/schemas/InvalidQueryError'
+        result:
+          example: []
+          items: {}
+          maxItems: 0
+          type: array
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_SqlQueryError_():
+      description: Base response structure. Wraps the result and may also contain
+        error messages.
+      properties:
+        errors:
+          $ref: '#/components/schemas/SqlQueryError'
+        result:
+          example: []
+          items: {}
+          maxItems: 0
+          type: array
+      required:
+      - errors
+      - result
+      type: object
+    ApiResult_[Warning]_AppStatus:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -14,7 +44,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_DiffTime:
+    ApiResult_[Warning]_DiffTime:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -28,7 +58,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_Int:
+    ApiResult_[Warning]_Int:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -44,7 +74,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_SqlDebugOutput:
+    ApiResult_[Warning]_SqlDebugOutput:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -58,7 +88,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_Text:
+    ApiResult_[Warning]_Text:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -72,7 +102,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_[CustomQueryResult]:
+    ApiResult_[Warning]_[CustomQueryResult]:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -460,27 +490,16 @@ components:
       type: string
     WalletControllerStatus:
       properties:
-        errors:
-          items:
-            description: Arbitrary JSON value
-            title: JSON
-          type: array
-        result:
-          properties:
-            count:
-              $ref: '#/components/schemas/ComponentStatus'
-            creation_cycle:
-              $ref: '#/components/schemas/ComponentStatus'
-            transaction_test:
-              $ref: '#/components/schemas/ComponentStatus'
-          required:
-          - count
-          - creation_cycle
-          - transaction_test
-          type: object
+        count:
+          $ref: '#/components/schemas/ComponentStatus'
+        creation_cycle:
+          $ref: '#/components/schemas/ComponentStatus'
+        transaction_test:
+          $ref: '#/components/schemas/ComponentStatus'
       required:
-      - result
-      - errors
+      - count
+      - creation_cycle
+      - transaction_test
       type: object
     Warning:
       description: Warnings that can be sent along with sucessful responses.
@@ -552,7 +571,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[CustomQueryResult]'
+                $ref: '#/components/schemas/ApiResult_[Warning]_[CustomQueryResult]'
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -560,13 +579,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/InvalidQueryError'
+                $ref: '#/components/schemas/ApiResult_InvalidQueryError_()'
           description: ''
         '500':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: 'Custom database query endpoint. Requires Dev, Production or Staging
         access: callable via software or human operators. Run a custom database query
@@ -578,7 +597,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_AppStatus'
+                $ref: '#/components/schemas/ApiResult_[Warning]_AppStatus'
           description: ''
       summary: Retrieve status information about the backend. Does not require authentication.
   /api/v1/last/block:
@@ -588,13 +607,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_Int'
+                $ref: '#/components/schemas/ApiResult_[Warning]_Int'
           description: ''
         '500':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -606,13 +625,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_Int'
+                $ref: '#/components/schemas/ApiResult_[Warning]_Int'
           description: ''
         '500':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the number of the last
@@ -630,7 +649,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_Text'
+                $ref: '#/components/schemas/ApiResult_[Warning]_Text'
           description: ''
         '400':
           description: Invalid `script`
@@ -638,7 +657,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: Default database query endpoint, for basic information about the network.
         Unauthenticated users can access this endpoint. Get the last transaction hash.
@@ -695,7 +714,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_SqlDebugOutput'
+                $ref: '#/components/schemas/ApiResult_[Warning]_SqlDebugOutput'
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -703,13 +722,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/InvalidQueryError'
+                $ref: '#/components/schemas/ApiResult_InvalidQueryError_()'
           description: ''
         '500':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Run a custom database query and retrieve its results along with
@@ -721,13 +740,13 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_DiffTime'
+                $ref: '#/components/schemas/ApiResult_[Warning]_DiffTime'
           description: ''
         '500':
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/SqlQueryError'
+                $ref: '#/components/schemas/ApiResult_SqlQueryError_()'
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
