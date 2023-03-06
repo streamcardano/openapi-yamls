@@ -5,7 +5,9 @@ components:
         error messages.
       properties:
         errors:
-          $ref: '#/components/schemas/InvalidQueryError'
+          items:
+            $ref: '#/components/schemas/InvalidQueryError'
+          type: array
         result:
           example: []
           items: {}
@@ -20,7 +22,9 @@ components:
         error messages.
       properties:
         errors:
-          $ref: '#/components/schemas/SqlQueryError'
+          items:
+            $ref: '#/components/schemas/SqlQueryError'
+          type: array
         result:
           example: []
           items: {}
@@ -30,7 +34,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_[Warning]_AppStatus:
+    ApiResult_Warning_AppStatus:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -44,7 +48,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_[Warning]_DiffTime:
+    ApiResult_Warning_DiffTime:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -58,7 +62,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_[Warning]_Int:
+    ApiResult_Warning_Int:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -74,7 +78,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_[Warning]_SqlDebugOutput:
+    ApiResult_Warning_SqlDebugOutput:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -88,7 +92,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_[Warning]_Text:
+    ApiResult_Warning_Text:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -102,7 +106,7 @@ components:
       - errors
       - result
       type: object
-    ApiResult_[Warning]_[CustomQueryResult]:
+    ApiResult_Warning_[CustomQueryResult]:
       description: Base response structure. Wraps the result and may also contain
         error messages.
       properties:
@@ -571,7 +575,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[Warning]_[CustomQueryResult]'
+                $ref: '#/components/schemas/ApiResult_Warning_[CustomQueryResult]'
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -597,7 +601,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[Warning]_AppStatus'
+                $ref: '#/components/schemas/ApiResult_Warning_AppStatus'
           description: ''
       summary: Retrieve status information about the backend. Does not require authentication.
   /api/v1/last/block:
@@ -607,7 +611,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[Warning]_Int'
+                $ref: '#/components/schemas/ApiResult_Warning_Int'
           description: ''
         '500':
           content:
@@ -625,7 +629,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[Warning]_Int'
+                $ref: '#/components/schemas/ApiResult_Warning_Int'
           description: ''
         '500':
           content:
@@ -649,7 +653,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[Warning]_Text'
+                $ref: '#/components/schemas/ApiResult_Warning_Text'
           description: ''
         '400':
           description: Invalid `script`
@@ -714,7 +718,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[Warning]_SqlDebugOutput'
+                $ref: '#/components/schemas/ApiResult_Warning_SqlDebugOutput'
           description: ''
         '400':
           description: Invalid `params` or `blocks` or `body`
@@ -740,7 +744,7 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ApiResult_[Warning]_DiffTime'
+                $ref: '#/components/schemas/ApiResult_Warning_DiffTime'
           description: ''
         '500':
           content:
