@@ -370,6 +370,11 @@ components:
     DiffTime:
       format: PyYmMdDThHmMs[.sss]S
       type: string
+    Favicon:
+      description: Icon is metadata displayed by the browser to indicate app in the
+        tab.
+      format: ICO image format
+      type: string
     InvalidQueryError:
       properties:
         errors:
@@ -689,6 +694,15 @@ paths:
           description: Returns events describing new blocks
       summary: Listen to new blocks on the chain
     summary: Server-sent events for new blocks
+  /favicon.ico:
+    get:
+      responses:
+        '200':
+          content:
+            image/x-icon:
+              schema:
+                $ref: '#/components/schemas/Favicon'
+          description: ''
   /api/v1/debug/query:
     post:
       parameters:
