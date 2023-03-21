@@ -768,6 +768,3 @@ paths:
           description: ''
       summary: 'Debug endpoint: probe and tinker. Requires Dev access: only for human
         operators. Check by how much time our Cardano node is behind the network.'
-servers:
-- description: TestEnv server
-  url: https://test.streamcardano.dev
